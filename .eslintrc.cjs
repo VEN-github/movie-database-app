@@ -15,6 +15,14 @@ module.exports = {
       {
         ignores: ['Button']
       }
+    ],
+    'vue/html-button-has-type': [
+      'error',
+      {
+        button: true,
+        submit: true,
+        reset: true
+      }
     ]
   },
   parserOptions: {
