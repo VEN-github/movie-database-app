@@ -1,5 +1,6 @@
 export type APIResponse<T> = {
-  success: boolean
+  page?: number
   results: T
-  status: number
+  total_pages?: number
+  total_results?: string
 }

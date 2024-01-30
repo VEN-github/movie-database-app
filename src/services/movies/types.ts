@@ -1,5 +1,5 @@
 export type Movie = {
-  id: number
+  readonly id: number
   title: string
   overview: string
   release_date: string
