@@ -13,7 +13,7 @@ module.exports = {
     'vue/multi-word-component-names': [
       'error',
       {
-        ignores: ['Button']
+        ignores: ['Button', 'Separator']
       }
     ],
     'vue/html-button-has-type': [

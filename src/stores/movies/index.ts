@@ -18,7 +18,7 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  function initMovies(data: Movie[]) {
+  function initMovies(data: Movie[]): void {
     const results = data.map((item: Movie) => {
       return {
         id: item.id,
@@ -34,5 +34,6 @@ export const useMovieStore = defineStore('movie', () => {
 
     movies.value = results
   }
+
   return { movies, getMovies }
 })

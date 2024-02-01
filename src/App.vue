@@ -1,17 +1,12 @@
 <template>
-  <h1>Hello World</h1>
-  <Button>Click Me</Button>
+  <TheHeader />
+  <main>
+    <RouterView />
+  </main>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useMovieStore } from '@/stores/movies'
+import { RouterView } from 'vue-router'
 
-import { Button } from '@/components/ui/button'
-
-const movieStore = useMovieStore()
-
-onMounted(async () => {
-  await movieStore.getMovies()
-})
+import TheHeader from '@/layouts/TheHeader.vue'
 </script>
