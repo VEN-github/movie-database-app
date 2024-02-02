@@ -1,10 +1,11 @@
 <template>
-  <footer class="self-end py-8">
+  <footer class="py-8">
     <BaseContainer>
       <div class="flex items-center justify-center gap-x-1 text-custom-foreground">
         <Copyright :size="18" />
-        <p class="text-lg">
-          2024&nbsp;<span class="text-xl font-medium tracking-tighter text-custom-primary"
+        <p class="text-sm sm:text-lg">
+          2024&nbsp;<span
+            class="text-base font-medium tracking-tighter text-custom-primary sm:text-xl"
             >sinehan</span
           >. All rights reserved.
         </p>

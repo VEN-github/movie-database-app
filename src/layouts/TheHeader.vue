@@ -1,6 +1,7 @@
 <template>
-  <header class="fixed left-0 top-0 w-full py-10 md:py-12">
-    <BaseContainer>
+  <header class="fixed left-0 top-0 z-10 w-full py-10 md:py-12">
+    <div class="absolute inset-0 w-full bg-custom-bg blur-3xl"></div>
+    <BaseContainer class="relative">
       <div class="flex items-center justify-between">
         <AppLogo />
         <nav class="hidden lg:block">

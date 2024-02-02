@@ -76,7 +76,7 @@
 }
 
 .hamburger {
-  @apply relative z-10 m-0 inline-block cursor-pointer overflow-visible border-0 bg-transparent transition-all;
+  @apply relative z-20 m-0 inline-block cursor-pointer overflow-visible border-0 bg-transparent transition-all;
 }
 
 .hamburger:hover {

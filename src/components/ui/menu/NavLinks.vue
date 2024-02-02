@@ -22,7 +22,7 @@ const props = withDefaults(
 const links = ref<Link[]>([
   {
     text: 'Home',
-    url: '#'
+    url: '/'
   },
   {
     text: 'Movies',
