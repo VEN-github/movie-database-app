@@ -7,7 +7,7 @@
         <nav class="hidden lg:block">
           <NavLinks type="desktop" />
         </nav>
-        <NavExtras @toggle-menu="isOpen = !isOpen" />
+        <NavExtras @toggle-menu="toggleMenu" />
         <div
           class="fixed right-0 top-0 w-full bg-custom-foreground-secondary/10 backdrop-blur transition-transform duration-500 md:w-2/4 lg:hidden"
           :class="[isOpen ? 'translate-x-0' : 'translate-x-full']"
@@ -30,4 +30,9 @@ import NavExtras from '@/components/ui/menu/NavExtras.vue'
 const isOpen = ref<boolean>(false)
 
 provide('isOpen', isOpen)
+
+function toggleMenu(): void {
+  isOpen.value = !isOpen.value
+  document.body.classList.toggle('overflow-y-hidden')
+}
 </script>
