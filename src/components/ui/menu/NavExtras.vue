@@ -11,7 +11,7 @@
         class="h-5 w-5 transition-colors group-hover:text-custom-primary xl:h-6 xl:w-6"
       />
     </RouterLink>
-    <MenuButton />
+    <MenuButton @toggle-menu="emit('toggleMenu')" />
   </div>
 </template>
 
@@ -22,4 +22,6 @@ import { Search } from 'lucide-vue-next'
 import { CircleUserRound } from 'lucide-vue-next'
 import { Separator } from '@/components/ui/separator'
 import MenuButton from './MenuButton.vue'
+
+const emit = defineEmits(['toggleMenu'])
 </script>

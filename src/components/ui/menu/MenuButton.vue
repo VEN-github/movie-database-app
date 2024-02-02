@@ -3,7 +3,7 @@
     type="button"
     class="hamburger hamburger--slider lg:hidden"
     :class="{ 'is-active': isOpen }"
-    @click="isOpen = !isOpen"
+    @click="emit('toggleMenu')"
   >
     <span class="hamburger-box">
       <span class="hamburger-inner"></span>
@@ -12,7 +12,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { inject } from 'vue'
 
-const isOpen = ref<boolean>(false)
+const isOpen = inject('isOpen') as boolean
+
+const emit = defineEmits(['toggleMenu'])
 </script>

@@ -67,7 +67,7 @@
 
 @layer base {
   body {
-    @apply bg-custom-bg text-custom-foreground;
+    @apply overflow-x-hidden bg-custom-bg text-custom-foreground;
   }
 }
 
@@ -76,7 +76,7 @@
 }
 
 .hamburger {
-  @apply m-0 inline-block cursor-pointer overflow-visible border-0 bg-transparent transition-all;
+  @apply relative z-10 m-0 inline-block cursor-pointer overflow-visible border-0 bg-transparent transition-all;
 }
 
 .hamburger:hover {

@@ -1,5 +1,5 @@
 <template>
-  <li class="xl:text-lg">
+  <li class="text-2xl lg:text-base xl:text-lg">
     <RouterLink :to="link.url" class="transition-colors hover:text-custom-primary">{{
       link.text
     }}</RouterLink>
