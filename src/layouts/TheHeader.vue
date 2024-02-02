@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, provide } from 'vue'
+import { ref, provide, watch } from 'vue'
 
 import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import AppLogo from '@/components/ui/logo/AppLogo.vue'
@@ -31,8 +31,19 @@ const isOpen = ref<boolean>(false)
 
 provide('isOpen', isOpen)
 
+watch(isOpen, (value) => {
+  if (value) document.addEventListener('click', detectClickOutside)
+})
+
 function toggleMenu(): void {
   isOpen.value = !isOpen.value
   document.body.classList.toggle('overflow-y-hidden')
+}
+
+function detectClickOutside(event: Event): void {
+  if (!(event.target as HTMLInputElement).closest('.hamburger')) {
+    isOpen.value = false
+    document.body.classList.remove('overflow-y-hidden')
+  }
 }
 </script>
