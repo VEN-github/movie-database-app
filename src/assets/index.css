@@ -142,3 +142,7 @@
   top: 20px;
   transform: translate3d(0, -20px, 0) rotate(-90deg);
 }
+
+.dots-container {
+  @apply !bottom-0.5 sm:!bottom-3;
+}

@@ -8,3 +8,8 @@ export type Movie = {
   backdrop_path: string
   genre_ids: number[]
 }
+
+export type Genre = {
+  readonly id: number
+  name: string
+}

@@ -6,4 +6,8 @@ async function getMovies() {
   return await api.get<APIResponse<Movie[]>>('/discover/movie')
 }
 
-export default { getMovies }
+async function getGenres() {
+  return await api.get('/genre/movie/list?language=en-us')
+}
+
+export default { getMovies, getGenres }

@@ -18,8 +18,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 
-import { Search } from 'lucide-vue-next'
-import { CircleUserRound } from 'lucide-vue-next'
+import { Search, CircleUserRound } from 'lucide-vue-next'
 import { Separator } from '@/components/ui/separator'
 import MenuButton from './MenuButton.vue'
 
