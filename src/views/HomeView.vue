@@ -13,12 +13,14 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie } from '@/services/movies/types'
+import { useToast } from '@/components/ui/toast/use-toast'
 
 import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import HeroSection from '@/components/common/HeroSection.vue'
 
 const movieStore = useMovieStore()
+const { toast } = useToast()
 const movies = ref<Movie[]>([])
 const options = reactive({
   Panzoom: {
@@ -47,7 +49,17 @@ async function getMovies() {
     await movieStore.getMovies()
     movies.value = movieStore.movies.splice(0, 10)
   } catch (error) {
-    console.error(error)
+    if (error instanceof Error) {
+      toast({
+        title: error.message,
+        variant: 'destructive'
+      })
+    } else {
+      toast({
+        title: 'Unknown error occured',
+        variant: 'destructive'
+      })
+    }
   }
 }
 </script>
