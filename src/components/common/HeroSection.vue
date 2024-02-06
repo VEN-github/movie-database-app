@@ -25,11 +25,33 @@
               >My List</span
             ></Button
           >
-          <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
-            ><PlayCircle stroke-width="1.5" :size="20" /><span class="pl-2 font-medium sm:text-lg"
-              >Watch Trailer</span
-            ></Button
-          >
+          <Dialog>
+            <DialogTrigger as-child>
+              <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
+                ><PlayCircle stroke-width="1.5" :size="20" /><span
+                  class="pl-2 font-medium sm:text-lg"
+                  >Watch Trailer</span
+                ></Button
+              ></DialogTrigger
+            >
+            <DialogContent class="border-0 bg-custom-bg">
+              <DialogHeader>
+                <DialogTitle></DialogTitle>
+                <DialogDescription> </DialogDescription>
+              </DialogHeader>
+              <AspectRatio :ratio="16 / 9">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/TnGl01FkMMo?autoplay=1"
+                  frameborder="0"
+                  loading="lazy"
+                  allow="autoplay"
+                  allowfullscreen
+                ></iframe>
+              </AspectRatio>
+            </DialogContent>
+          </Dialog>
         </div>
       </BaseContainer>
     </div>
@@ -49,6 +71,15 @@ import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 
 const props = defineProps({
   trending: {
