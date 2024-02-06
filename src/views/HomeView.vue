@@ -1,8 +1,8 @@
 <template>
-  <section v-if="movies.length">
+  <section v-if="trendingList.length">
     <BaseCarousel ref="carouselEl" :options="options" autoplay>
-      <CarouselSlide v-for="movie in movies" :key="movie.id">
-        <HeroSection :movie="movie" />
+      <CarouselSlide v-for="(trending, index) in trendingList" :key="index + 'e' + trending.id">
+        <HeroSection :trending="trending" />
         <div class="dots-container"></div>
       </CarouselSlide>
     </BaseCarousel>
@@ -10,9 +10,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie } from '@/services/movies/types'
+import { useTVStore } from '@/stores/tv'
+import type { TV } from '@/services/tv/types'
 import { useToast } from '@/components/ui/toast/use-toast'
 
 import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
@@ -20,8 +22,10 @@ import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import HeroSection from '@/components/common/HeroSection.vue'
 
 const movieStore = useMovieStore()
+const tvStore = useTVStore()
 const { toast } = useToast()
-const movies = ref<Movie[]>([])
+const trendingMovies = ref<Movie[]>([])
+const trendingTVShows = ref<TV[]>([])
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)
 const options = reactive({
   Panzoom: {
@@ -41,8 +45,26 @@ const options = reactive({
   }
 })
 
+const combinedArray = computed<[Movie, TV]>(() => {
+  const combinedArray = [...trendingMovies.value, ...trendingTVShows.value] as [Movie, TV]
+
+  return combinedArray
+})
+
+const trendingList = computed<[Movie, TV]>(() => {
+  const array = combinedArray.value
+
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+
+  return array
+})
+
 onMounted(async () => {
-  await getMovies()
+  await getTrendingMovies()
+  await getTrendingTVShows()
   handleResize()
   window.addEventListener('resize', handleResize)
 })
@@ -51,10 +73,29 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
-async function getMovies(): Promise<void> {
+async function getTrendingMovies(): Promise<void> {
   try {
-    await movieStore.getMovies()
-    movies.value = movieStore.movies.splice(0, 10)
+    await movieStore.getTrendingMovies()
+    trendingMovies.value = movieStore.trendingMovies
+  } catch (error) {
+    if (error instanceof Error) {
+      toast({
+        title: error.message,
+        variant: 'destructive'
+      })
+    } else {
+      toast({
+        title: 'Unknown error occured.',
+        variant: 'destructive'
+      })
+    }
+  }
+}
+
+async function getTrendingTVShows(): Promise<void> {
+  try {
+    await tvStore.getTrendingTVShows()
+    trendingTVShows.value = tvStore.trendingTVShows
   } catch (error) {
     if (error instanceof Error) {
       toast({

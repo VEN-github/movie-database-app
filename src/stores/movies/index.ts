@@ -8,6 +8,7 @@ import { handleApiError } from '@/composables/handleApiError'
 
 export const useMovieStore = defineStore('movie', () => {
   const movies = ref<Movie[]>([])
+  const trendingMovies = ref<Movie[]>([])
   const genres = ref<Genre[]>([])
 
   async function getGenres(): Promise<void> {
@@ -25,6 +26,17 @@ export const useMovieStore = defineStore('movie', () => {
       await getGenres()
       const { data } = await API.movies.getMovies()
       initMovies(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getTrendingMovies(): Promise<void> {
+    try {
+      await getGenres()
+      const { data } = await API.movies.getTrendingMovies()
+      initTrendingMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -52,5 +64,22 @@ export const useMovieStore = defineStore('movie', () => {
     movies.value = results
   }
 
-  return { movies, genres, getGenres, getMovies }
+  function initTrendingMovies(data: Movie[]): void {
+    const results = data.splice(0, 10).map((item: Movie) => {
+      return {
+        id: item.id,
+        title: item.title,
+        overview: item.overview,
+        release_date: item.release_date,
+        vote_average: item.vote_average,
+        poster_path: item.poster_path,
+        backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
+        genre_ids: item.genre_ids
+      }
+    })
+
+    trendingMovies.value = results
+  }
+
+  return { movies, trendingMovies, genres, getGenres, getMovies, getTrendingMovies }
 })

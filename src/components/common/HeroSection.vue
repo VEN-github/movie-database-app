@@ -1,15 +1,13 @@
 <template>
   <div
     class="relative h-screen w-full bg-cover bg-center bg-no-repeat"
-    :data-lazy-src="movie.backdrop_path"
+    :data-lazy-src="trending.backdrop_path"
   >
     <div class="absolute bottom-0 left-0 w-full">
       <div class="absolute inset-0 w-full bg-custom-bg blur-3xl"></div>
       <BaseContainer class="relative pb-6 pt-4 sm:pb-14">
         <div class="mb-8 flex flex-col gap-y-2 sm:gap-y-4">
-          <h1 class="text-2xl font-bold tracking-tight xs:text-3xl sm:text-6xl">
-            {{ movie.title }}
-          </h1>
+          <h1 class="text-2xl font-bold tracking-tight xs:text-3xl sm:text-6xl">{{ title }}</h1>
           <p class="flex items-center gap-x-3 text-sm sm:text-base">
             <span>{{ releaseDate }}</span>
             <Separator orientation="vertical" class="!h-4" />
@@ -42,7 +40,9 @@
 import { computed } from 'vue'
 import type { PropType } from 'vue'
 import { useMovieStore } from '@/stores/movies'
+import { useTVStore } from '@/stores/tv'
 import type { Movie } from '@/services/movies/types'
+import type { TV } from '@/services/tv/types'
 import dayjs from 'dayjs'
 
 import BaseContainer from '@/components/ui/container/BaseContainer.vue'
@@ -51,22 +51,53 @@ import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
 
 const props = defineProps({
-  movie: {
-    type: Object as PropType<Movie>,
+  trending: {
+    type: Object as PropType<Movie | TV>,
     required: true
   }
 })
 
 const movieStore = useMovieStore()
+const tvStore = useTVStore()
+
+const title = computed<string>(() => {
+  if ('title' in props.trending) {
+    return props.trending.title
+  }
+
+  if ('name' in props.trending) {
+    return props.trending.name
+  }
+
+  return ''
+})
 
 const releaseDate = computed<string>(() => {
-  return dayjs(props.movie.release_date).format('YYYY')
+  if ('release_date' in props.trending) {
+    return dayjs(props.trending.release_date).format('YYYY')
+  }
+
+  if ('first_air_date' in props.trending) {
+    return dayjs(props.trending.first_air_date).format('YYYY')
+  }
+
+  return ''
 })
 
 const genres = computed<string>(() => {
-  const genreNames = props.movie.genre_ids.map(
-    (id) => movieStore.genres.find((genre) => genre.id === id)?.name
-  )
+  let genreNames: (string | undefined)[] = []
+
+  if ('release_date' in props.trending) {
+    genreNames = props.trending.genre_ids.map(
+      (id) => movieStore.genres.find((genre) => genre.id === id)?.name
+    )
+  }
+
+  if ('first_air_date' in props.trending) {
+    genreNames = props.trending.genre_ids.map(
+      (id) => tvStore.genres.find((genre) => genre.id === id)?.name
+    )
+  }
 
   return genreNames?.join(', ') || ''
 })
@@ -78,6 +109,6 @@ const formmattedGenreNames = computed<string>(() => {
 })
 
 const rating = computed<string>(() => {
-  return props.movie.vote_average.toFixed(1)
+  return props.trending.vote_average.toFixed(1)
 })
 </script>
