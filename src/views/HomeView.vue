@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie } from '@/services/movies/types'
 import { useTVStore } from '@/stores/tv'
@@ -26,6 +26,7 @@ const tvStore = useTVStore()
 const { toast } = useToast()
 const trendingMovies = ref<Movie[]>([])
 const trendingTVShows = ref<TV[]>([])
+const trendingList = ref<(Movie | TV)[]>([])
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)
 const options = reactive({
   Panzoom: {
@@ -45,26 +46,8 @@ const options = reactive({
   }
 })
 
-const combinedArray = computed<[Movie, TV]>(() => {
-  const combinedArray = [...trendingMovies.value, ...trendingTVShows.value] as [Movie, TV]
-
-  return combinedArray
-})
-
-const trendingList = computed<[Movie, TV]>(() => {
-  const array = combinedArray.value
-
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-
-  return array
-})
-
 onMounted(async () => {
-  await getTrendingMovies()
-  await getTrendingTVShows()
+  await fetchData()
   handleResize()
   window.addEventListener('resize', handleResize)
 })
@@ -73,22 +56,17 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
 
+async function fetchData(): Promise<void> {
+  await Promise.all([getTrendingMovies(), getTrendingTVShows()])
+  combinedArray()
+}
+
 async function getTrendingMovies(): Promise<void> {
   try {
     await movieStore.getTrendingMovies()
     trendingMovies.value = movieStore.trendingMovies
   } catch (error) {
-    if (error instanceof Error) {
-      toast({
-        title: error.message,
-        variant: 'destructive'
-      })
-    } else {
-      toast({
-        title: 'Unknown error occured.',
-        variant: 'destructive'
-      })
-    }
+    handleFetchError(error)
   }
 }
 
@@ -97,18 +75,28 @@ async function getTrendingTVShows(): Promise<void> {
     await tvStore.getTrendingTVShows()
     trendingTVShows.value = tvStore.trendingTVShows
   } catch (error) {
-    if (error instanceof Error) {
-      toast({
-        title: error.message,
-        variant: 'destructive'
-      })
-    } else {
-      toast({
-        title: 'Unknown error occured.',
-        variant: 'destructive'
-      })
-    }
+    handleFetchError(error)
   }
+}
+
+function combinedArray(): void {
+  const combinedArray = [...trendingMovies.value, ...trendingTVShows.value] as [Movie, TV]
+
+  shuffleArray(combinedArray)
+}
+
+function shuffleArray(array: [Movie, TV]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+
+  trendingList.value = array
+}
+
+function handleFetchError(error: unknown): void {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred.'
+  toast({ title: errorMessage, variant: 'destructive' })
 }
 
 function handleResize(): void {
