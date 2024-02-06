@@ -1,6 +1,6 @@
 <template>
   <section v-if="movies.length">
-    <BaseCarousel :options="options" autoplay>
+    <BaseCarousel ref="carouselEl" :options="options" autoplay>
       <CarouselSlide v-for="movie in movies" :key="movie.id">
         <HeroSection :movie="movie" />
         <div class="dots-container"></div>
@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie } from '@/services/movies/types'
 import { useToast } from '@/components/ui/toast/use-toast'
@@ -22,6 +22,7 @@ import HeroSection from '@/components/common/HeroSection.vue'
 const movieStore = useMovieStore()
 const { toast } = useToast()
 const movies = ref<Movie[]>([])
+const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)
 const options = reactive({
   Panzoom: {
     touch: false
@@ -42,9 +43,15 @@ const options = reactive({
 
 onMounted(async () => {
   await getMovies()
+  handleResize()
+  window.addEventListener('resize', handleResize)
 })
 
-async function getMovies() {
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+async function getMovies(): Promise<void> {
   try {
     await movieStore.getMovies()
     movies.value = movieStore.movies.splice(0, 10)
@@ -56,10 +63,20 @@ async function getMovies() {
       })
     } else {
       toast({
-        title: 'Unknown error occured',
+        title: 'Unknown error occured.',
         variant: 'destructive'
       })
     }
   }
+}
+
+function handleResize(): void {
+  carouselEl.value?.destroyCarousel()
+  if (window.innerWidth <= 1024) {
+    options.Panzoom.touch = true
+  } else {
+    options.Panzoom.touch = false
+  }
+  carouselEl.value?.initCarousel()
 }
 </script>

@@ -13,7 +13,7 @@
           <p class="flex items-center gap-x-3 text-sm sm:text-base">
             <span>{{ releaseDate }}</span>
             <Separator orientation="vertical" class="!h-4" />
-            <span :title="genres">{{ genres }}</span>
+            <span :title="genres">{{ formmattedGenreNames }}</span>
             <span class="rounded bg-custom-primary px-2 text-base font-medium sm:text-lg">{{
               rating
             }}</span>
@@ -68,9 +68,13 @@ const genres = computed<string>(() => {
     (id) => movieStore.genres.find((genre) => genre.id === id)?.name
   )
 
-  return genreNames.length > 2
-    ? genreNames.slice(0, 2).concat(['...']).join(', ')
-    : genreNames.join(', ')
+  return genreNames?.join(', ') || ''
+})
+
+const formmattedGenreNames = computed<string>(() => {
+  return genres.value.split(',').length > 2
+    ? genres.value.split(',').slice(0, 2).concat(['...']).join(', ')
+    : genres.value
 })
 
 const rating = computed<string>(() => {

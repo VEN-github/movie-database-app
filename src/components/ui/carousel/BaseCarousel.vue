@@ -20,14 +20,24 @@ const carousel = ref<Carousel | null>(null)
 const carouselEl = ref<HTMLElement | null>(null)
 
 defineExpose({
-  carousel
+  carousel,
+  initCarousel,
+  destroyCarousel
 })
 
-onMounted(async () => {
+onMounted(() => {
+  initCarousel()
+})
+
+function initCarousel() {
   carousel.value = new Carousel(
     carouselEl.value,
     props.options,
     props.autoplay ? { Autoplay } : null
   )
-})
+}
+
+function destroyCarousel() {
+  carousel.value?.destroy()
+}
 </script>
