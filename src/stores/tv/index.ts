@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
-import type { TV, Genre } from '@/services/tv/types'
+import type { TV, Genre, Video } from '@/services/tv/types'
 import { BACKDROP_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
@@ -9,6 +9,7 @@ import { handleApiError } from '@/composables/handleApiError'
 export const useTVStore = defineStore('tv', () => {
   const trendingTVShows = ref<TV[]>([])
   const genres = ref<Genre[]>([])
+  const video = ref<Video | null>(null)
 
   async function getGenres(): Promise<void> {
     try {
@@ -25,6 +26,16 @@ export const useTVStore = defineStore('tv', () => {
       await getGenres()
       const { data } = await API.tv.getTrendingTVShows()
       initTrendingTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getVideos(id: number): Promise<void> {
+    try {
+      const { data } = await API.tv.getVideos(id)
+      initVideo(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -52,5 +63,25 @@ export const useTVStore = defineStore('tv', () => {
     trendingTVShows.value = results
   }
 
-  return { trendingTVShows, genres, getGenres, getTrendingTVShows }
+  function initVideo(data: Video[]): void {
+    const result = data
+      .filter(
+        (video: Video) =>
+          video.site === 'YouTube' &&
+          video.type === 'Trailer' &&
+          video.name.includes('Trailer') &&
+          !video.name.includes('Teaser')
+      )
+      .reverse()[0]
+
+    if (!result) {
+      video.value = null
+      return
+    }
+
+    const { id, name, key, type, site } = result
+    video.value = { id, name, key, type, site }
+  }
+
+  return { trendingTVShows, genres, video, getGenres, getTrendingTVShows, getVideos }
 })

@@ -27,30 +27,16 @@
           >
           <Dialog>
             <DialogTrigger as-child>
-              <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
+              <Button
+                class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
+                :disabled="!video"
                 ><PlayCircle stroke-width="1.5" :size="20" /><span
                   class="pl-2 font-medium sm:text-lg"
                   >Watch Trailer</span
                 ></Button
               ></DialogTrigger
             >
-            <DialogContent class="border-0 bg-custom-bg">
-              <DialogHeader>
-                <DialogTitle></DialogTitle>
-                <DialogDescription> </DialogDescription>
-              </DialogHeader>
-              <AspectRatio :ratio="16 / 9">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/TnGl01FkMMo?autoplay=1"
-                  frameborder="0"
-                  loading="lazy"
-                  allow="autoplay"
-                  allowfullscreen
-                ></iframe>
-              </AspectRatio>
-            </DialogContent>
+            <VideoTrailer :video="video" />
           </Dialog>
         </div>
       </BaseContainer>
@@ -59,11 +45,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { PropType } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import { useTVStore } from '@/stores/tv'
-import type { Movie } from '@/services/movies/types'
+import type { Movie, Video } from '@/services/movies/types'
 import type { TV } from '@/services/tv/types'
 import dayjs from 'dayjs'
 
@@ -71,15 +57,8 @@ import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog'
-import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import VideoTrailer from '@/components/VideoTrailer.vue'
 
 const props = defineProps({
   trending: {
@@ -90,6 +69,7 @@ const props = defineProps({
 
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
+const video = ref<Video | null>(null)
 
 const title = computed<string>(() => {
   if ('title' in props.trending) {
@@ -141,5 +121,16 @@ const formmattedGenreNames = computed<string>(() => {
 
 const rating = computed<string>(() => {
   return props.trending.vote_average.toFixed(1)
+})
+
+onMounted(async () => {
+  if ('release_date' in props.trending) {
+    await movieStore.getVideos(props.trending.id)
+    video.value = movieStore.video
+  }
+  if ('first_air_date' in props.trending) {
+    await tvStore.getVideos(props.trending.id)
+    video.value = tvStore.video
+  }
 })
 </script>

@@ -1,6 +1,6 @@
 import api from '@/services/api'
 import type { APIResponse } from '@/services/types'
-import type { Movie } from './types'
+import type { Movie, Video } from './types'
 
 async function getMovies() {
   return await api.get<APIResponse<Movie[]>>('/discover/movie')
@@ -14,4 +14,8 @@ async function getGenres() {
   return await api.get('/genre/movie/list?language=en-us')
 }
 
-export default { getMovies, getTrendingMovies, getGenres }
+async function getVideos(id: number) {
+  return await api.get<APIResponse<Video[]>>(`/movie/${id}/videos?language=en-US`)
+}
+
+export default { getMovies, getTrendingMovies, getGenres, getVideos }

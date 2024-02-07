@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
-import type { Movie, Genre } from '@/services/movies/types'
+import type { Movie, Genre, Video } from '@/services/movies/types'
 import { BACKDROP_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
@@ -10,6 +10,7 @@ export const useMovieStore = defineStore('movie', () => {
   const movies = ref<Movie[]>([])
   const trendingMovies = ref<Movie[]>([])
   const genres = ref<Genre[]>([])
+  const video = ref<Video | null>(null)
 
   async function getGenres(): Promise<void> {
     try {
@@ -37,6 +38,16 @@ export const useMovieStore = defineStore('movie', () => {
       await getGenres()
       const { data } = await API.movies.getTrendingMovies()
       initTrendingMovies(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getVideos(id: number): Promise<void> {
+    try {
+      const { data } = await API.movies.getVideos(id)
+      initVideo(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -81,5 +92,34 @@ export const useMovieStore = defineStore('movie', () => {
     trendingMovies.value = results
   }
 
-  return { movies, trendingMovies, genres, getGenres, getMovies, getTrendingMovies }
+  function initVideo(data: Video[]): void {
+    const result = data
+      .filter(
+        (video: Video) =>
+          video.site === 'YouTube' &&
+          video.type === 'Trailer' &&
+          video.name.includes('Trailer') &&
+          !video.name.includes('Teaser')
+      )
+      .reverse()[0]
+
+    if (!result) {
+      video.value = null
+      return
+    }
+
+    const { id, name, key, type, site } = result
+    video.value = { id, name, key, type, site }
+  }
+
+  return {
+    movies,
+    trendingMovies,
+    genres,
+    video,
+    getGenres,
+    getMovies,
+    getTrendingMovies,
+    getVideos
+  }
 })
