@@ -22,7 +22,9 @@ const carouselEl = ref<HTMLElement | null>(null)
 defineExpose({
   carousel,
   initCarousel,
-  destroyCarousel
+  destroyCarousel,
+  slideNext,
+  slidePrev
 })
 
 onMounted(() => {
@@ -39,5 +41,13 @@ function initCarousel() {
 
 function destroyCarousel() {
   carousel.value?.destroy()
+}
+
+function slideNext() {
+  carousel.value?.slideNext()
+}
+
+function slidePrev() {
+  carousel.value?.slidePrev()
 }
 </script>

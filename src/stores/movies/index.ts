@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
 import type { Movie, Genre, Video } from '@/services/movies/types'
-import { BACKDROP_URL } from '@/constants/image'
+import { BACKDROP_URL, POSTER_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
@@ -66,7 +66,7 @@ export const useMovieStore = defineStore('movie', () => {
         overview: item.overview,
         release_date: item.release_date,
         vote_average: item.vote_average,
-        poster_path: item.poster_path,
+        poster_path: `${POSTER_URL.medium}${item.poster_path}`,
         backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
         genre_ids: item.genre_ids
       }
@@ -76,14 +76,14 @@ export const useMovieStore = defineStore('movie', () => {
   }
 
   function initTrendingMovies(data: Movie[]): void {
-    const results = data.splice(0, 10).map((item: Movie) => {
+    const results = data.map((item: Movie) => {
       return {
         id: item.id,
         title: item.title,
         overview: item.overview,
         release_date: item.release_date,
         vote_average: item.vote_average,
-        poster_path: item.poster_path,
+        poster_path: `${POSTER_URL.medium}${item.poster_path}`,
         backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
         genre_ids: item.genre_ids
       }

@@ -10,6 +10,12 @@
       </CarouselSlide>
     </BaseCarousel>
   </section>
+  <section v-if="trendingMovies.length" class="mt-24">
+    <MediaCarousel title="Trending Movies" :medias="trendingMovies" />
+  </section>
+  <section v-if="trendingTVShows.length" class="mb-16 mt-36">
+    <MediaCarousel title="Trending TV Shows" :medias="trendingTVShows" />
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -24,6 +30,7 @@ import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import HeroSection from '@/components/common/HeroSection.vue'
 import BaseSpinner from '@/components/ui/loader/BaseSpinner.vue'
+import MediaCarousel from '@/components/MediaCarousel.vue'
 
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
@@ -40,7 +47,8 @@ const options = reactive({
   Navigation: false,
   Dots: {
     classes: {
-      list: 'f-carousel__dots dots-container'
+      list: 'f-carousel__dots dots-container',
+      hasDots: ''
     },
     dynamicFrom: 5
   },
@@ -98,7 +106,7 @@ function shuffleArray(array: [Movie, TV]): void {
     ;[array[i], array[j]] = [array[j], array[i]]
   }
 
-  trendingList.value = array
+  trendingList.value = array.splice(0, 10)
 }
 
 function handleFetchError(error: unknown): void {

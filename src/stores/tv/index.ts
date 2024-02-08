@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
 import type { TV, Genre, Video } from '@/services/tv/types'
-import { BACKDROP_URL } from '@/constants/image'
+import { BACKDROP_URL, POSTER_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
@@ -47,14 +47,14 @@ export const useTVStore = defineStore('tv', () => {
   }
 
   function initTrendingTVShows(data: TV[]): void {
-    const results = data.splice(0, 10).map((item: TV) => {
+    const results = data.map((item: TV) => {
       return {
         id: item.id,
         name: item.name,
         overview: item.overview,
         first_air_date: item.first_air_date,
         vote_average: item.vote_average,
-        poster_path: item.poster_path,
+        poster_path: `${POSTER_URL.medium}${item.poster_path}`,
         backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
         genre_ids: item.genre_ids
       }
