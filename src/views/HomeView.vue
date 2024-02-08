@@ -1,5 +1,8 @@
 <template>
-  <section v-if="trendingList.length">
+  <div v-if="isLoading" class="grid h-screen place-items-center">
+    <BaseSpinner />
+  </div>
+  <section v-else-if="!isLoading && trendingList.length">
     <BaseCarousel ref="carouselEl" :options="options" autoplay>
       <CarouselSlide v-for="(trending, index) in trendingList" :key="index + 'e' + trending.id">
         <HeroSection :trending="trending" />
@@ -20,10 +23,12 @@ import { useToast } from '@/components/ui/toast/use-toast'
 import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import HeroSection from '@/components/common/HeroSection.vue'
+import BaseSpinner from '@/components/ui/loader/BaseSpinner.vue'
 
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const { toast } = useToast()
+const isLoading = ref<boolean>(false)
 const trendingMovies = ref<Movie[]>([])
 const trendingTVShows = ref<TV[]>([])
 const trendingList = ref<(Movie | TV)[]>([])
@@ -57,8 +62,10 @@ onUnmounted(() => {
 })
 
 async function fetchData(): Promise<void> {
+  isLoading.value = true
   await Promise.all([getTrendingMovies(), getTrendingTVShows()])
   combinedArray()
+  isLoading.value = false
 }
 
 async function getTrendingMovies(): Promise<void> {
