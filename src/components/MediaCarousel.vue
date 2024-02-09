@@ -27,7 +27,7 @@
       </p>
     </div>
     <div
-      class="mx-auto w-full max-w-64 xs:max-w-xs sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[1100px] 2xl:max-w-7xl"
+      class="mx-auto w-full max-w-60 xs:max-w-[300px] sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[1100px] 2xl:max-w-7xl"
     >
       <BaseCarousel
         ref="carouselEl"
