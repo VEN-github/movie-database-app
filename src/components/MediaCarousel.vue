@@ -1,8 +1,10 @@
 <template>
   <BaseContainer>
     <div class="mb-8 flex items-center justify-between">
-      <div class="flex items-center gap-x-4">
-        <h2 class="text-4xl font-semibold">{{ title }}</h2>
+      <div class="flex items-center xs:gap-x-1 sm:gap-x-4">
+        <h2 class="text-sm font-semibold xs:text-lg sm:text-2xl xl:text-3xl 2xl:text-4xl">
+          {{ title }}
+        </h2>
         <div class="nav-container flex items-center">
           <button
             type="button"
@@ -20,19 +22,23 @@
           </button>
         </div>
       </div>
-      <p class="flex items-center gap-x-1 font-medium text-custom-secondary">
+      <p class="flex items-center gap-x-1 text-sm font-medium text-custom-secondary sm:text-base">
         View all <ChevronRight :size="18" />
       </p>
     </div>
-    <BaseCarousel
-      ref="carouselEl"
-      :options="options"
-      style="--f-carousel-spacing: 60px; --f-carousel-slide-width: fit-content"
+    <div
+      class="mx-auto w-full max-w-64 xs:max-w-xs sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[1100px] 2xl:max-w-7xl"
     >
-      <CarouselSlide v-for="media in medias" :key="media.id">
-        <MovieCard :media="media" />
-      </CarouselSlide>
-    </BaseCarousel>
+      <BaseCarousel
+        ref="carouselEl"
+        :options="options"
+        style="--f-carousel-slide-padding: 0 1rem; --f-carousel-slide-width: fit-content"
+      >
+        <CarouselSlide v-for="media in medias" :key="media.id">
+          <MovieCard :media="media" />
+        </CarouselSlide>
+      </BaseCarousel>
+    </div>
   </BaseContainer>
 </template>
 
@@ -54,6 +60,7 @@ defineProps<{
 
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)
 const options = reactive({
+  slidesPerPage: 1,
   transition: 'slide',
   Navigation: false,
   Dots: false
