@@ -1,11 +1,11 @@
 <template>
   <BaseContainer>
     <div class="mb-8 flex items-center justify-between">
-      <div class="flex items-center xs:gap-x-1 sm:gap-x-4">
+      <div class="flex items-center gap-x-4">
         <h2 class="text-sm font-semibold xs:text-lg sm:text-2xl xl:text-3xl 2xl:text-4xl">
           {{ title }}
         </h2>
-        <div class="nav-container flex items-center">
+        <div class="nav-container hidden sm:flex sm:items-center">
           <button
             type="button"
             class="nav-button disabled:text-primary"
