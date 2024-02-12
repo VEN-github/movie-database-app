@@ -1,14 +1,14 @@
 <template>
-  <header class="fixed left-0 top-0 z-10 w-full py-10 md:py-12">
+  <header
+    class="fixed left-0 top-0 z-10 w-full py-10 transition-transform duration-300 md:py-12"
+    :class="[isShow ? 'translate-y-0' : '-translate-y-96']"
+  >
     <div
       class="absolute inset-0 w-full bg-gradient-to-b from-custom-bg from-0% to-transparent transition-opacity duration-200"
       :class="[isShow ? 'opacity-100' : 'opacity-0']"
     ></div>
     <BaseContainer class="relative">
-      <div
-        class="flex items-center justify-between transition-transform duration-300"
-        :class="[isShow ? 'translate-y-0' : '-translate-y-96']"
-      >
+      <div class="flex items-center justify-between">
         <AppLogo />
         <nav class="hidden lg:block">
           <NavLinks type="desktop" />
