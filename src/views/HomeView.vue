@@ -1,20 +1,22 @@
 <template>
-  <div v-if="isLoading" class="grid h-screen place-items-center">
-    <BaseSpinner />
-  </div>
-  <section v-else-if="!isLoading && trendingList.length">
-    <BaseCarousel ref="carouselEl" :options="options" autoplay>
-      <CarouselSlide v-for="(trending, index) in trendingList" :key="index + 'e' + trending.id">
-        <HeroSection :trending="trending" />
-        <div class="dots-container"></div>
-      </CarouselSlide>
-    </BaseCarousel>
-  </section>
-  <section v-if="trendingMovies.length" class="mt-24">
-    <MediaCarousel title="Trending Movies" :medias="trendingMovies" />
-  </section>
-  <section v-if="trendingTVShows.length" class="mb-16 mt-36">
-    <MediaCarousel title="Trending TV Shows" :medias="trendingTVShows" />
+  <section>
+    <div v-if="isLoading" class="grid h-screen place-items-center">
+      <BaseSpinner />
+    </div>
+    <div v-else-if="!isLoading && topRatedList.length">
+      <BaseCarousel ref="carouselEl" :options="options" autoplay>
+        <CarouselSlide v-for="(list, index) in topRatedList" :key="index + 'e' + list.id">
+          <HeroSection :media="list" />
+          <div class="dots-container"></div>
+        </CarouselSlide>
+      </BaseCarousel>
+    </div>
+    <div v-if="!isLoading && trendingMovies.length" class="mt-24">
+      <MediaCarousel title="Trending Movies" :medias="trendingMovies" link="/movies" />
+    </div>
+    <div v-if="!isLoading && trendingTVShows.length" class="mb-16 mt-36">
+      <MediaCarousel title="Trending TV Shows" :medias="trendingTVShows" link="/tv-shows" />
+    </div>
   </section>
 </template>
 
@@ -36,9 +38,11 @@ const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const { toast } = useToast()
 const isLoading = ref<boolean>(false)
+const topRatedMovies = ref<Movie[]>([])
+const topRatedTVShows = ref<TV[]>([])
+const topRatedList = ref<(Movie | TV)[]>([])
 const trendingMovies = ref<Movie[]>([])
 const trendingTVShows = ref<TV[]>([])
-const trendingList = ref<(Movie | TV)[]>([])
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)
 const options = reactive({
   Panzoom: {
@@ -71,9 +75,32 @@ onUnmounted(() => {
 
 async function fetchData(): Promise<void> {
   isLoading.value = true
-  await Promise.all([getTrendingMovies(), getTrendingTVShows()])
+  await Promise.all([
+    getTopRatedMovies(),
+    getTopRatedTVShows(),
+    getTrendingMovies(),
+    getTrendingTVShows()
+  ])
   combinedArray()
   isLoading.value = false
+}
+
+async function getTopRatedMovies(): Promise<void> {
+  try {
+    await movieStore.getTopRatedMovies()
+    topRatedMovies.value = movieStore.topRatedMovies
+  } catch (error) {
+    handleFetchError(error)
+  }
+}
+
+async function getTopRatedTVShows(): Promise<void> {
+  try {
+    await tvStore.getTopRatedTVShows()
+    topRatedTVShows.value = tvStore.topRatedTVShows
+  } catch (error) {
+    handleFetchError(error)
+  }
 }
 
 async function getTrendingMovies(): Promise<void> {
@@ -95,7 +122,7 @@ async function getTrendingTVShows(): Promise<void> {
 }
 
 function combinedArray(): void {
-  const combinedArray = [...trendingMovies.value, ...trendingTVShows.value] as [Movie, TV]
+  const combinedArray = [...topRatedMovies.value, ...topRatedTVShows.value] as [Movie, TV]
 
   shuffleArray(combinedArray)
 }
@@ -106,7 +133,7 @@ function shuffleArray(array: [Movie, TV]): void {
     ;[array[i], array[j]] = [array[j], array[i]]
   }
 
-  trendingList.value = array.splice(0, 10)
+  topRatedList.value = array.splice(0, 10)
 }
 
 function handleFetchError(error: unknown): void {

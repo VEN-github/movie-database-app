@@ -26,11 +26,11 @@ const links = ref<Link[]>([
   },
   {
     text: 'Movies',
-    url: '#'
+    url: '/movies'
   },
   {
     text: 'TV Shows',
-    url: '#'
+    url: '/tv-shows'
   },
   {
     text: 'My List',

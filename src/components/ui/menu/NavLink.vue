@@ -1,8 +1,11 @@
 <template>
   <li class="text-2xl lg:text-base xl:text-lg">
-    <RouterLink :to="link.url" class="transition-colors hover:text-custom-primary">{{
-      link.text
-    }}</RouterLink>
+    <RouterLink
+      :to="link.url"
+      class="transition-colors hover:text-custom-primary"
+      active-class="text-custom-primary font-medium"
+      >{{ link.text }}</RouterLink
+    >
   </li>
 </template>
 

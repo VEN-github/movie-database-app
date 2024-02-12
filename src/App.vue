@@ -1,7 +1,11 @@
 <template>
   <TheHeader />
   <main>
-    <RouterView />
+    <RouterView v-slot="{ Component, route }">
+      <Transition name="route" mode="out-in">
+        <Component :is="Component" :key="route.path" />
+      </Transition>
+    </RouterView>
   </main>
   <TheFooter />
   <Toaster />

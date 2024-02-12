@@ -7,6 +7,8 @@ import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
 export const useTVStore = defineStore('tv', () => {
+  const tvShows = ref<TV[]>([])
+  const topRatedTVShows = ref<TV[]>([])
   const trendingTVShows = ref<TV[]>([])
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
@@ -21,11 +23,31 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
-  async function getTrendingTVShows(): Promise<void> {
+  async function getTVShows(): Promise<void> {
+    try {
+      const { data } = await API.tv.getTVShows()
+      tvShows.value = initTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getTopRatedTVShows(): Promise<void> {
     try {
       await getGenres()
+      const { data } = await API.tv.getTopRatedTVShows()
+      topRatedTVShows.value = initTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getTrendingTVShows(): Promise<void> {
+    try {
       const { data } = await API.tv.getTrendingTVShows()
-      initTrendingTVShows(data.results)
+      trendingTVShows.value = initTVShows(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -46,7 +68,7 @@ export const useTVStore = defineStore('tv', () => {
     genres.value = data
   }
 
-  function initTrendingTVShows(data: TV[]): void {
+  function initTVShows(data: TV[]): TV[] {
     const results = data.map((item: TV) => {
       return {
         id: item.id,
@@ -60,7 +82,7 @@ export const useTVStore = defineStore('tv', () => {
       }
     })
 
-    trendingTVShows.value = results
+    return results
   }
 
   function initVideo(data: Video[]): void {
@@ -83,5 +105,16 @@ export const useTVStore = defineStore('tv', () => {
     video.value = { id, name, key, type, site }
   }
 
-  return { trendingTVShows, genres, video, getGenres, getTrendingTVShows, getVideos }
+  return {
+    tvShows,
+    topRatedTVShows,
+    trendingTVShows,
+    genres,
+    video,
+    getGenres,
+    getTVShows,
+    getTopRatedTVShows,
+    getTrendingTVShows,
+    getVideos
+  }
 })

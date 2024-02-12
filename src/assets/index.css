@@ -146,3 +146,13 @@
 .dots-container {
   @apply !bottom-0.5 sm:!bottom-3;
 }
+
+.route-enter-active,
+.route-leave-active {
+  @apply transition-opacity duration-500 ease-in-out;
+}
+
+.route-enter-from,
+.route-leave-to {
+  @apply opacity-0;
+}

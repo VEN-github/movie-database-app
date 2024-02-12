@@ -9,6 +9,7 @@ import { handleApiError } from '@/composables/handleApiError'
 export const useMovieStore = defineStore('movie', () => {
   const movies = ref<Movie[]>([])
   const trendingMovies = ref<Movie[]>([])
+  const topRatedMovies = ref<Movie[]>([])
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
 
@@ -24,9 +25,19 @@ export const useMovieStore = defineStore('movie', () => {
 
   async function getMovies(): Promise<void> {
     try {
-      await getGenres()
       const { data } = await API.movies.getMovies()
-      initMovies(data.results)
+      movies.value = initMovies(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getTopRatedMovies(): Promise<void> {
+    try {
+      await getGenres()
+      const { data } = await API.movies.getTopRatedMovies()
+      topRatedMovies.value = initMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -35,9 +46,8 @@ export const useMovieStore = defineStore('movie', () => {
 
   async function getTrendingMovies(): Promise<void> {
     try {
-      await getGenres()
       const { data } = await API.movies.getTrendingMovies()
-      initTrendingMovies(data.results)
+      trendingMovies.value = initMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -58,7 +68,7 @@ export const useMovieStore = defineStore('movie', () => {
     genres.value = data
   }
 
-  function initMovies(data: Movie[]): void {
+  function initMovies(data: Movie[]): Movie[] {
     const results = data.map((item: Movie) => {
       return {
         id: item.id,
@@ -72,24 +82,7 @@ export const useMovieStore = defineStore('movie', () => {
       }
     })
 
-    movies.value = results
-  }
-
-  function initTrendingMovies(data: Movie[]): void {
-    const results = data.map((item: Movie) => {
-      return {
-        id: item.id,
-        title: item.title,
-        overview: item.overview,
-        release_date: item.release_date,
-        vote_average: item.vote_average,
-        poster_path: `${POSTER_URL.medium}${item.poster_path}`,
-        backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
-        genre_ids: item.genre_ids
-      }
-    })
-
-    trendingMovies.value = results
+    return results
   }
 
   function initVideo(data: Video[]): void {
@@ -114,11 +107,13 @@ export const useMovieStore = defineStore('movie', () => {
 
   return {
     movies,
+    topRatedMovies,
     trendingMovies,
     genres,
     video,
     getGenres,
     getMovies,
+    getTopRatedMovies,
     getTrendingMovies,
     getVideos
   }

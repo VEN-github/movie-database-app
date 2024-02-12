@@ -22,9 +22,11 @@
           </button>
         </div>
       </div>
-      <p class="flex items-center gap-x-1 text-sm font-medium text-custom-secondary sm:text-base">
-        View all <ChevronRight :size="18" />
-      </p>
+      <RouterLink
+        :to="link"
+        class="flex items-center gap-x-1 text-sm font-medium text-custom-secondary sm:text-base"
+        >View all <ChevronRight :size="18"
+      /></RouterLink>
     </div>
     <div
       class="mx-auto w-full max-w-60 xs:max-w-[300px] sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-[1100px] 2xl:max-w-7xl"
@@ -35,7 +37,7 @@
         style="--f-carousel-slide-padding: 0 1rem; --f-carousel-slide-width: fit-content"
       >
         <CarouselSlide v-for="media in medias" :key="media.id">
-          <MovieCard :media="media" />
+          <MediaCard :media="media" />
         </CarouselSlide>
       </BaseCarousel>
     </div>
@@ -44,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { Movie } from '@/services/movies/types'
 import type { TV } from '@/services/tv/types'
 
@@ -51,11 +54,12 @@ import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import MovieCard from './MovieCard.vue'
+import MediaCard from './MediaCard.vue'
 
 defineProps<{
   title: string
   medias: (Movie | TV)[]
+  link: string
 }>()
 
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)

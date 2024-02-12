@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative h-screen w-full bg-cover bg-center bg-no-repeat"
-    :data-lazy-src="trending.backdrop_path"
+    :data-lazy-src="media.backdrop_path"
   >
     <div class="absolute bottom-0 left-0 w-full">
       <div class="absolute inset-0 w-full bg-custom-bg blur-3xl"></div>
@@ -61,7 +61,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import VideoTrailer from '@/components/VideoTrailer.vue'
 
 const props = defineProps({
-  trending: {
+  media: {
     type: Object as PropType<Movie | TV>,
     required: true
   }
@@ -72,24 +72,24 @@ const tvStore = useTVStore()
 const video = ref<Video | null>(null)
 
 const title = computed<string>(() => {
-  if ('title' in props.trending) {
-    return props.trending.title
+  if ('title' in props.media) {
+    return props.media.title
   }
 
-  if ('name' in props.trending) {
-    return props.trending.name
+  if ('name' in props.media) {
+    return props.media.name
   }
 
   return ''
 })
 
 const releaseDate = computed<string>(() => {
-  if ('release_date' in props.trending) {
-    return dayjs(props.trending.release_date).format('YYYY')
+  if ('release_date' in props.media) {
+    return dayjs(props.media.release_date).format('YYYY')
   }
 
-  if ('first_air_date' in props.trending) {
-    return dayjs(props.trending.first_air_date).format('YYYY')
+  if ('first_air_date' in props.media) {
+    return dayjs(props.media.first_air_date).format('YYYY')
   }
 
   return ''
@@ -98,14 +98,14 @@ const releaseDate = computed<string>(() => {
 const genres = computed<string>(() => {
   let genreNames: (string | undefined)[] = []
 
-  if ('release_date' in props.trending) {
-    genreNames = props.trending.genre_ids.map(
+  if ('release_date' in props.media) {
+    genreNames = props.media.genre_ids.map(
       (id) => movieStore.genres.find((genre) => genre.id === id)?.name
     )
   }
 
-  if ('first_air_date' in props.trending) {
-    genreNames = props.trending.genre_ids.map(
+  if ('first_air_date' in props.media) {
+    genreNames = props.media.genre_ids.map(
       (id) => tvStore.genres.find((genre) => genre.id === id)?.name
     )
   }
@@ -120,16 +120,16 @@ const formmattedGenreNames = computed<string>(() => {
 })
 
 const rating = computed<string>(() => {
-  return props.trending.vote_average.toFixed(1)
+  return props.media.vote_average.toFixed(1)
 })
 
 onMounted(async () => {
-  if ('release_date' in props.trending) {
-    await movieStore.getVideos(props.trending.id)
+  if ('release_date' in props.media) {
+    await movieStore.getVideos(props.media.id)
     video.value = movieStore.video
   }
-  if ('first_air_date' in props.trending) {
-    await tvStore.getVideos(props.trending.id)
+  if ('first_air_date' in props.media) {
+    await tvStore.getVideos(props.media.id)
     video.value = tvStore.video
   }
 })

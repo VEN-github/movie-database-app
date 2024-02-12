@@ -1,6 +1,11 @@
 <template>
-  <div class="w-fit">
-    <img class="rounded-lg drop-shadow-2xl" alt="" width="200" :data-lazy-src="media.poster_path" />
+  <div class="flex h-full w-fit flex-col">
+    <img
+      class="grow rounded-lg object-cover drop-shadow-2xl"
+      :src="media.poster_path"
+      :alt="media.poster_path"
+      width="200"
+    />
     <div class="mt-2 flex items-center justify-between gap-x-1">
       <h1 class="w-36 truncate text-lg" :title="title">{{ title }}</h1>
       <p class="rounded bg-custom-primary px-1.5 text-sm font-medium">
