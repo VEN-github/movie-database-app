@@ -4,7 +4,9 @@
     :data-lazy-src="media.backdrop_path"
   >
     <div class="absolute bottom-0 left-0 w-full">
-      <div class="absolute inset-0 w-full bg-custom-bg blur-3xl"></div>
+      <div
+        class="absolute inset-0 w-full bg-gradient-to-t from-custom-bg from-0% to-transparent"
+      ></div>
       <BaseContainer class="relative pb-6 pt-4 sm:pb-14">
         <div class="mb-8 flex flex-col gap-y-2 sm:gap-y-4">
           <h1 class="text-2xl font-bold tracking-tight xs:text-3xl sm:text-6xl">{{ title }}</h1>

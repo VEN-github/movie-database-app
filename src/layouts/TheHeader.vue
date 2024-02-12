@@ -1,11 +1,14 @@
 <template>
-  <header
-    ref="header"
-    class="fixed left-0 top-0 z-10 w-full -translate-y-96 py-10 transition-transform duration-300 md:py-12"
-  >
-    <div class="absolute inset-0 w-full bg-custom-bg blur-3xl"></div>
+  <header class="fixed left-0 top-0 z-10 w-full py-10 md:py-12">
+    <div
+      class="absolute inset-0 w-full bg-gradient-to-b from-custom-bg from-0% to-transparent transition-opacity duration-200"
+      :class="[isShow ? 'opacity-100' : 'opacity-0']"
+    ></div>
     <BaseContainer class="relative">
-      <div class="flex items-center justify-between">
+      <div
+        class="flex items-center justify-between transition-transform duration-300"
+        :class="[isShow ? 'translate-y-0' : '-translate-y-96']"
+      >
         <AppLogo />
         <nav class="hidden lg:block">
           <NavLinks type="desktop" />
@@ -30,8 +33,8 @@ import AppLogo from '@/components/ui/logo/AppLogo.vue'
 import NavLinks from '@/components/ui/menu/NavLinks.vue'
 import NavExtras from '@/components/ui/menu/NavExtras.vue'
 
-const header = ref<HTMLHeadingElement | null>(null)
 const isOpen = ref<boolean>(false)
+const isShow = ref<boolean>(true)
 const lastScrollTop = ref<number>(0)
 let timeout: undefined | number
 
@@ -42,7 +45,6 @@ watch(isOpen, (value) => {
 })
 
 onMounted(() => {
-  header.value?.classList.add('translate-y-0')
   window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
@@ -66,14 +68,14 @@ function handleScroll(): void {
   clearTimeout(timeout)
 
   if (window.scrollY > lastScrollTop.value) {
-    header.value?.classList.remove('translate-y-0')
+    isShow.value = false
   } else if (window.scrollY < lastScrollTop.value) {
-    header.value?.classList.add('translate-y-0')
+    isShow.value = true
   }
   lastScrollTop.value = window.scrollY <= 0 ? 0 : window.scrollY
 
   timeout = setTimeout(() => {
-    header.value?.classList.add('translate-y-0')
+    isShow.value = true
   }, 500)
 }
 </script>
