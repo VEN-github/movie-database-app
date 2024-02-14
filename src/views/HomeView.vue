@@ -75,50 +75,39 @@ onUnmounted(() => {
 
 async function fetchData(): Promise<void> {
   isLoading.value = true
-  await Promise.all([
-    getTopRatedMovies(),
-    getTopRatedTVShows(),
-    getTrendingMovies(),
-    getTrendingTVShows()
-  ])
-  combinedArray()
-  isLoading.value = false
+  try {
+    await Promise.all([
+      getTopRatedMovies(),
+      getTopRatedTVShows(),
+      getTrendingMovies(),
+      getTrendingTVShows()
+    ])
+    combinedArray()
+  } catch (error) {
+    handleFetchError(error)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 async function getTopRatedMovies(): Promise<void> {
-  try {
-    await movieStore.getTopRatedMovies()
-    topRatedMovies.value = movieStore.topRatedMovies
-  } catch (error) {
-    handleFetchError(error)
-  }
+  await movieStore.getTopRatedMovies()
+  topRatedMovies.value = movieStore.topRatedMovies
 }
 
 async function getTopRatedTVShows(): Promise<void> {
-  try {
-    await tvStore.getTopRatedTVShows()
-    topRatedTVShows.value = tvStore.topRatedTVShows
-  } catch (error) {
-    handleFetchError(error)
-  }
+  await tvStore.getTopRatedTVShows()
+  topRatedTVShows.value = tvStore.topRatedTVShows
 }
 
 async function getTrendingMovies(): Promise<void> {
-  try {
-    await movieStore.getTrendingMovies()
-    trendingMovies.value = movieStore.trendingMovies
-  } catch (error) {
-    handleFetchError(error)
-  }
+  await movieStore.getTrendingMovies()
+  trendingMovies.value = movieStore.trendingMovies
 }
 
 async function getTrendingTVShows(): Promise<void> {
-  try {
-    await tvStore.getTrendingTVShows()
-    trendingTVShows.value = tvStore.trendingTVShows
-  } catch (error) {
-    handleFetchError(error)
-  }
+  await tvStore.getTrendingTVShows()
+  trendingTVShows.value = tvStore.trendingTVShows
 }
 
 function combinedArray(): void {
@@ -143,11 +132,7 @@ function handleFetchError(error: unknown): void {
 
 function handleResize(): void {
   carouselEl.value?.destroyCarousel()
-  if (window.innerWidth <= 1024) {
-    options.Panzoom.touch = true
-  } else {
-    options.Panzoom.touch = false
-  }
+  options.Panzoom.touch = window.innerWidth <= 1024 ? true : false
   carouselEl.value?.initCarousel()
 }
 </script>
