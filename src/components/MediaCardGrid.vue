@@ -3,8 +3,8 @@
     <img
       class="grow rounded-lg object-cover drop-shadow-2xl"
       :src="media.poster_path"
-      :alt="media.poster_path"
-      width="200"
+      :alt="title"
+      :width="imgWidth"
     />
     <div class="mt-2 flex items-center justify-between gap-x-1">
       <h1 class="w-36 truncate text-lg" :title="title">{{ title }}</h1>
@@ -27,6 +27,12 @@ const props = defineProps({
   media: {
     type: Object as PropType<Movie | TV>,
     required: true
+  },
+  imgWidth: {
+    type: [String, Number],
+    default() {
+      return 200
+    }
   }
 })
 

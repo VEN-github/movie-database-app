@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
 import type { Movie, Genre, Video } from '@/services/movies/types'
-import { BACKDROP_URL, POSTER_URL } from '@/constants/image'
+import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
@@ -76,7 +76,9 @@ export const useMovieStore = defineStore('movie', () => {
         overview: item.overview,
         release_date: item.release_date,
         vote_average: item.vote_average,
-        poster_path: `${POSTER_URL.large}${item.poster_path}`,
+        poster_path: item.poster_path
+          ? `${POSTER_URL.large}${item.poster_path}`
+          : DEFAULT_POSTER_URL.large,
         backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
         genre_ids: item.genre_ids
       }

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@fancyapps/ui": "^5.0.33",
+    "@vueuse/core": "^10.7.2",
     "axios": "^1.6.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",

@@ -14,3 +14,7 @@ export const POSTER_URL = {
   xxlarge: 'https://image.tmdb.org/t/p/w780',
   original: 'https://image.tmdb.org/t/p/original'
 }
+
+export const DEFAULT_POSTER_URL = {
+  large: 'https://placehold.co/300x400?text=' + encodeURIComponent('No\nImage\nAvailable')
+}

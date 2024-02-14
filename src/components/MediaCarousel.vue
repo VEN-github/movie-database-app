@@ -37,7 +37,7 @@
         style="--f-carousel-slide-padding: 0 1rem; --f-carousel-slide-width: fit-content"
       >
         <CarouselSlide v-for="media in medias" :key="media.id">
-          <MediaCard :media="media" />
+          <MediaCardGrid :media="media" />
         </CarouselSlide>
       </BaseCarousel>
     </div>
@@ -54,7 +54,7 @@ import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import MediaCard from './MediaCard.vue'
+import MediaCardGrid from './MediaCardGrid.vue'
 
 defineProps<{
   title: string
