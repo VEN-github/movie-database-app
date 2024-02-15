@@ -8,6 +8,7 @@ import { handleApiError } from '@/composables/handleApiError'
 
 export const useMovieStore = defineStore('movie', () => {
   const movies = ref<Movie[]>([])
+  const popularMovies = ref<Movie[]>([])
   const trendingMovies = ref<Movie[]>([])
   const topRatedMovies = ref<Movie[]>([])
   const genres = ref<Genre[]>([])
@@ -27,6 +28,16 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       const { data } = await API.movies.getMovies()
       movies.value = initMovies(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getPopularMovies(): Promise<void> {
+    try {
+      const { data } = await API.movies.getPopularMovies()
+      popularMovies.value = initMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -109,12 +120,14 @@ export const useMovieStore = defineStore('movie', () => {
 
   return {
     movies,
+    popularMovies,
     topRatedMovies,
     trendingMovies,
     genres,
     video,
     getGenres,
     getMovies,
+    getPopularMovies,
     getTopRatedMovies,
     getTrendingMovies,
     getVideos

@@ -8,6 +8,7 @@ import { handleApiError } from '@/composables/handleApiError'
 
 export const useTVStore = defineStore('tv', () => {
   const tvShows = ref<TV[]>([])
+  const popularTVShows = ref<TV[]>([])
   const topRatedTVShows = ref<TV[]>([])
   const trendingTVShows = ref<TV[]>([])
   const genres = ref<Genre[]>([])
@@ -27,6 +28,16 @@ export const useTVStore = defineStore('tv', () => {
     try {
       const { data } = await API.tv.getTVShows()
       tvShows.value = initTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getPopularTVShows(): Promise<void> {
+    try {
+      const { data } = await API.tv.getPopularTVShows()
+      popularTVShows.value = initTVShows(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -109,12 +120,14 @@ export const useTVStore = defineStore('tv', () => {
 
   return {
     tvShows,
+    popularTVShows,
     topRatedTVShows,
     trendingTVShows,
     genres,
     video,
     getGenres,
     getTVShows,
+    getPopularTVShows,
     getTopRatedTVShows,
     getTrendingTVShows,
     getVideos
