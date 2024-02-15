@@ -29,11 +29,13 @@
         >
           <PlusCircle stroke-width="1.5" :size="16" /><span>My List</span>
         </button>
-        <Button size="sm" class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
-          ><PlayCircle stroke-width="1.5" :size="16" /><span class="pl-2 font-medium"
-            >Watch Trailer</span
-          ></Button
-        >
+        <VideoTrailerDialog :id="media.id" :media-type="mediaType">
+          <Button size="sm" class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
+            ><PlayCircle stroke-width="1.5" :size="16" /><span class="pl-2 font-medium"
+              >Watch Trailer</span
+            ></Button
+          >
+        </VideoTrailerDialog>
       </div>
     </div>
   </div>
@@ -48,12 +50,24 @@ import dayjs from 'dayjs'
 
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
+import VideoTrailerDialog from '@/components/VideoTrailerDialog.vue'
 
 const props = defineProps({
   media: {
     type: Object as PropType<Movie | TV>,
     required: true
   }
+})
+
+const mediaType = computed<string>(() => {
+  if ('release_date' in props.media || 'title' in props.media) {
+    return 'movie'
+  }
+  if ('first_air_date' in props.media || 'name' in props.media) {
+    return 'tv'
+  }
+
+  return ''
 })
 
 const title = computed<string>(() => {
