@@ -7,15 +7,20 @@
       <div>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <select v-model="filters.type" class="bg-transparent">
-              <option class="bg-red-300" value="all">All</option>
-              <option class="bg-red-300" value="popular">Popular</option>
-              <option class="bg-red-300" value="top rated">Top Rated</option>
+            <select v-model="filters.type" class="bg-transparent outline-none">
+              <option class="bg-custom-bg" value="all">All</option>
+              <option class="bg-custom-bg" value="popular">Popular</option>
+              <option class="bg-custom-bg" value="top rated">Top Rated</option>
             </select>
             <Separator orientation="vertical" class="!h-4" />
-            <select class="bg-transparent" @change="handleGenreFilter">
-              <option value="">Genre</option>
-              <option v-for="genre in genres" :key="genre.id" class="bg-red-300" :value="genre.id">
+            <select class="bg-transparent outline-none" @change="handleGenreFilter">
+              <option class="bg-custom-bg" value="">Genre</option>
+              <option
+                v-for="genre in genres"
+                :key="genre.id"
+                class="bg-custom-bg"
+                :value="genre.id"
+              >
                 {{ genre.name }}
               </option>
             </select>
