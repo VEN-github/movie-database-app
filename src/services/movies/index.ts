@@ -6,6 +6,10 @@ async function getMovies() {
   return await api.get<APIResponse<Movie[]>>('/discover/movie')
 }
 
+async function getMovie(id: number) {
+  return await api.get<Movie>(`/movie/${id}?language=en-US`)
+}
+
 async function getPopularMovies() {
   return await api.get<APIResponse<Movie[]>>('/movie/popular?language=en-US')
 }
@@ -28,6 +32,7 @@ async function getVideos(id: number) {
 
 export default {
   getMovies,
+  getMovie,
   getPopularMovies,
   getTopRatedMovies,
   getTrendingMovies,

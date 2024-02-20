@@ -92,7 +92,7 @@ const title = computed<string>(() => {
 
 const slug = computed<string>(() => {
   if ('title' in props.media) {
-    return props.media.title
+    const slugTitle = props.media.title
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-') // Replace spaces with -
@@ -100,10 +100,12 @@ const slug = computed<string>(() => {
       .replace(/--+/g, '-') // Replace multiple - with single -
       .replace(/^-+/, '') // Trim - from start of text
       .replace(/-+$/, '')
+
+    return `movie/${slugTitle}`
   }
 
   if ('name' in props.media) {
-    return props.media.name
+    const slugName = props.media.name
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-') // Replace spaces with -
@@ -111,6 +113,8 @@ const slug = computed<string>(() => {
       .replace(/--+/g, '-') // Replace multiple - with single -
       .replace(/^-+/, '') // Trim - from start of text
       .replace(/-+$/, '')
+
+    return `tv-show/${slugName}`
   }
 
   return ''

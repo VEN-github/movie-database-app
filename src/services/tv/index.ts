@@ -6,6 +6,10 @@ async function getTVShows() {
   return await api.get<APIResponse<TV[]>>('/discover/tv')
 }
 
+async function getTVShow(id: number) {
+  return await api.get<TV>(`/tv/${id}?language=en-US`)
+}
+
 async function getPopularTVShows() {
   return await api.get<APIResponse<TV[]>>('/tv/popular?language=en-US')
 }
@@ -28,6 +32,7 @@ async function getVideos(id: number) {
 
 export default {
   getTVShows,
+  getTVShow,
   getPopularTVShows,
   getTopRatedTVShows,
   getTrendingTVShows,

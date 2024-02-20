@@ -8,6 +8,7 @@ import { handleApiError } from '@/composables/handleApiError'
 
 export const useTVStore = defineStore('tv', () => {
   const tvShows = ref<TV[]>([])
+  const tvShow = ref<TV | null>(null)
   const popularTVShows = ref<TV[]>([])
   const topRatedTVShows = ref<TV[]>([])
   const trendingTVShows = ref<TV[]>([])
@@ -28,6 +29,16 @@ export const useTVStore = defineStore('tv', () => {
     try {
       const { data } = await API.tv.getTVShows()
       tvShows.value = initTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getTVShow(id: number): Promise<void> {
+    try {
+      const { data } = await API.tv.getTVShow(id)
+      tvShow.value = initTVShow(data)
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -98,6 +109,21 @@ export const useTVStore = defineStore('tv', () => {
     return results
   }
 
+  function initTVShow(data: TV): TV {
+    return {
+      id: data.id,
+      name: data.name,
+      overview: data.overview,
+      first_air_date: data.first_air_date,
+      vote_average: data.vote_average,
+      poster_path: data.poster_path
+        ? `${POSTER_URL.large}${data.poster_path}`
+        : DEFAULT_POSTER_URL.large,
+      backdrop_path: `${BACKDROP_URL.original}${data.backdrop_path}`,
+      genre_ids: data.genre_ids
+    }
+  }
+
   function initVideo(data: Video[]): void {
     const result = data
       .filter(
@@ -120,6 +146,7 @@ export const useTVStore = defineStore('tv', () => {
 
   return {
     tvShows,
+    tvShow,
     popularTVShows,
     topRatedTVShows,
     trendingTVShows,
@@ -127,6 +154,7 @@ export const useTVStore = defineStore('tv', () => {
     video,
     getGenres,
     getTVShows,
+    getTVShow,
     getPopularTVShows,
     getTopRatedTVShows,
     getTrendingTVShows,
