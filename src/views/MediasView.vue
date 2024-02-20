@@ -5,7 +5,7 @@
   <section v-else-if="!isLoading && medias.length" class="pt-48">
     <BaseContainer>
       <div>
-        <div class="flex items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-2">
             <select v-model="filters.type" class="bg-transparent outline-none">
               <option class="bg-custom-bg" value="all">All</option>
@@ -251,6 +251,7 @@ async function changeLayout(layout: string): Promise<void> {
     commonStore.$patch({
       layout: layout
     })
+    handleResize()
     await nextTick()
     isLoading.value = false
   }
