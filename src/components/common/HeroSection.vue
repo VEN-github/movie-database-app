@@ -9,7 +9,11 @@
       ></div>
       <BaseContainer class="relative pb-6 pt-4 sm:pb-14">
         <div class="mb-8 flex flex-col gap-y-2 sm:gap-y-4">
-          <h1 class="text-2xl font-bold tracking-tight xs:text-3xl sm:text-6xl">{{ title }}</h1>
+          <RouterLink
+            :to="`/${slug}/${media.id}`"
+            class="text-2xl font-bold tracking-tight transition-colors hover:text-custom-primary xs:text-3xl sm:text-6xl"
+            >{{ title }}</RouterLink
+          >
           <p class="flex items-center gap-x-3 text-sm sm:text-base">
             <span>{{ releaseDate }}</span>
             <Separator orientation="vertical" class="!h-4" />
@@ -42,6 +46,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { PropType } from 'vue'
 import { useMovieStore } from '@/stores/movies'
 import { useTVStore } from '@/stores/tv'
@@ -83,6 +88,32 @@ const title = computed<string>(() => {
 
   if ('name' in props.media) {
     return props.media.name
+  }
+
+  return ''
+})
+
+const slug = computed<string>(() => {
+  if ('title' in props.media) {
+    return props.media.title
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
+  }
+
+  if ('name' in props.media) {
+    return props.media.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
   }
 
   return ''

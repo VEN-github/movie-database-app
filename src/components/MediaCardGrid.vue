@@ -1,13 +1,20 @@
 <template>
   <div class="flex h-full w-fit flex-col">
-    <img
-      class="grow rounded-lg object-cover drop-shadow-2xl"
-      :src="media.poster_path"
-      :alt="title"
-      :width="imgWidth"
-    />
+    <RouterLink :to="`/${slug}/${media.id}`" class="group">
+      <img
+        class="grow rounded-lg object-cover object-center drop-shadow-2xl transition-opacity group-hover:opacity-70"
+        :src="media.poster_path"
+        :alt="title"
+        :width="imgWidth"
+      />
+    </RouterLink>
     <div class="mt-2 flex items-center justify-between gap-x-1">
-      <h1 class="w-36 truncate text-lg" :title="title">{{ title }}</h1>
+      <RouterLink
+        :to="`/${slug}/${media.id}`"
+        class="w-36 truncate text-lg transition-colors hover:text-custom-primary"
+        :title="title"
+        >{{ title }}</RouterLink
+      >
       <p class="rounded bg-custom-primary px-1.5 text-sm font-medium">
         {{ rating }}
       </p>
@@ -18,6 +25,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import type { PropType } from 'vue'
 import type { Movie } from '@/services/movies/types'
 import type { TV } from '@/services/tv/types'
@@ -43,6 +51,32 @@ const title = computed<string>(() => {
 
   if ('name' in props.media) {
     return props.media.name
+  }
+
+  return ''
+})
+
+const slug = computed<string>(() => {
+  if ('title' in props.media) {
+    return props.media.title
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
+  }
+
+  if ('name' in props.media) {
+    return props.media.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
   }
 
   return ''

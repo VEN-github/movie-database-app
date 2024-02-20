@@ -1,14 +1,19 @@
 <template>
   <div class="flex gap-4">
     <img
-      class="h-[12.rem] w-28 rounded-lg object-cover drop-shadow-2xl xs:h-52 xs:w-32 md:h-56 md:w-36 xl:h-60 2xl:h-64"
+      class="h-[12.rem] w-28 cursor-pointer rounded-lg object-cover drop-shadow-2xl transition-opacity hover:opacity-70 xs:h-52 xs:w-32 md:h-56 md:w-36 xl:h-60 2xl:h-64"
       :src="media.poster_path"
       :alt="title"
+      role="link"
+      @click="onNavigate"
     />
     <div>
-      <h1 :title="title" class="line-clamp-2 font-semibold sm:text-xl xl:text-2xl">
-        {{ title }}
-      </h1>
+      <RouterLink
+        :to="`/${slug}/${media.id}`"
+        :title="title"
+        class="line-clamp-2 font-semibold transition-colors hover:text-custom-primary sm:text-xl xl:text-2xl"
+        >{{ title }}</RouterLink
+      >
       <p class="mt-1 space-x-4 text-sm sm:text-base">
         <span class="text-custom-foreground-secondary">{{ releaseDate }}</span
         ><span class="rounded bg-custom-primary px-1.5 font-medium">{{ rating }}</span>
@@ -43,6 +48,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
 import type { PropType } from 'vue'
 import type { Movie } from '@/services/movies/types'
 import type { TV } from '@/services/tv/types'
@@ -58,6 +64,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const router = useRouter()
 
 const mediaType = computed<string>(() => {
   if ('release_date' in props.media || 'title' in props.media) {
@@ -82,6 +90,32 @@ const title = computed<string>(() => {
   return ''
 })
 
+const slug = computed<string>(() => {
+  if ('title' in props.media) {
+    return props.media.title
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
+  }
+
+  if ('name' in props.media) {
+    return props.media.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w-]+/g, '') // Remove all non-word chars
+      .replace(/--+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '')
+  }
+
+  return ''
+})
+
 const releaseDate = computed<string>(() => {
   if ('release_date' in props.media) {
     return dayjs(props.media.release_date).format('YYYY')
@@ -97,4 +131,8 @@ const releaseDate = computed<string>(() => {
 const rating = computed<string>(() => {
   return props.media.vote_average.toFixed(1)
 })
+
+function onNavigate(): void {
+  router.push(`/${slug.value}/${props.media.id}`)
+}
 </script>
