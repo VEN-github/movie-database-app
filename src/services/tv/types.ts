@@ -6,7 +6,9 @@ export type TV = {
   vote_average: number
   poster_path: string
   backdrop_path: string
-  genre_ids: number[]
+  genre_ids?: number[]
+  genres?: Genre[]
+  episode_run_time?: number[]
 }
 
 export type Genre = {

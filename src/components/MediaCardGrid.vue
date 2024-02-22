@@ -15,7 +15,7 @@
         :title="title"
         >{{ title }}</RouterLink
       >
-      <p class="rounded bg-custom-primary px-1.5 text-sm font-medium">
+      <p v-if="rating" class="rounded bg-custom-primary px-1.5 text-sm font-medium">
         {{ rating }}
       </p>
     </div>

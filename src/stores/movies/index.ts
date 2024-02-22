@@ -120,7 +120,8 @@ export const useMovieStore = defineStore('movie', () => {
         ? `${POSTER_URL.large}${data.poster_path}`
         : DEFAULT_POSTER_URL.large,
       backdrop_path: `${BACKDROP_URL.original}${data.backdrop_path}`,
-      genre_ids: data.genre_ids
+      genres: data.genres,
+      runtime: data.runtime
     }
   }
 

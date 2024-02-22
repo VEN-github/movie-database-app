@@ -6,7 +6,9 @@ export type Movie = {
   vote_average: number
   poster_path: string
   backdrop_path: string
-  genre_ids: number[]
+  genre_ids?: number[]
+  genres?: Genre[]
+  runtime?: number
 }
 
 export type Genre = {

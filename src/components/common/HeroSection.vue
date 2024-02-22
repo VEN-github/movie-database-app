@@ -18,9 +18,11 @@
             <span>{{ releaseDate }}</span>
             <Separator orientation="vertical" class="!h-4" />
             <span :title="genres">{{ formmattedGenreNames }}</span>
-            <span class="rounded bg-custom-primary px-2 text-base font-medium sm:text-lg">{{
-              rating
-            }}</span>
+            <span
+              v-if="rating"
+              class="rounded bg-custom-primary px-2 text-base font-medium sm:text-lg"
+              >{{ rating }}</span
+            >
           </p>
         </div>
         <div
@@ -138,13 +140,13 @@ const releaseDate = computed<string>(() => {
 const genres = computed<string>(() => {
   let genreNames: (string | undefined)[] = []
 
-  if ('release_date' in props.media) {
+  if ('release_date' in props.media && props.media.genre_ids?.length) {
     genreNames = props.media.genre_ids.map(
       (id) => movieStore.genres.find((genre) => genre.id === id)?.name
     )
   }
 
-  if ('first_air_date' in props.media) {
+  if ('first_air_date' in props.media && props.media.genre_ids?.length) {
     genreNames = props.media.genre_ids.map(
       (id) => tvStore.genres.find((genre) => genre.id === id)?.name
     )

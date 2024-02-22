@@ -16,7 +16,9 @@
       >
       <p class="mt-1 space-x-4 text-sm sm:text-base">
         <span class="text-custom-foreground-secondary">{{ releaseDate }}</span
-        ><span class="rounded bg-custom-primary px-1.5 font-medium">{{ rating }}</span>
+        ><span v-if="rating" class="rounded bg-custom-primary px-1.5 font-medium">{{
+          rating
+        }}</span>
       </p>
       <p
         v-if="media.overview"
