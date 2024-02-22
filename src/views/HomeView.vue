@@ -1,22 +1,22 @@
 <template>
-  <section>
-    <div v-if="isLoading" class="grid h-screen place-items-center">
-      <BaseSpinner />
-    </div>
-    <div v-else-if="!isLoading && topRatedList.length">
-      <BaseCarousel ref="carouselEl" :options="options" autoplay>
-        <CarouselSlide v-for="(list, index) in topRatedList" :key="index + 'e' + list.id">
-          <HeroSection :media="list" />
-          <div class="dots-container"></div>
-        </CarouselSlide>
-      </BaseCarousel>
-    </div>
+  <BaseSpinnerContainer v-if="isLoading" />
+  <ApiErrorFallback v-else-if="!isLoading && isError" />
+  <section v-else-if="!isLoading && topRatedList.length">
+    <BaseCarousel ref="carouselEl" :options="options" autoplay>
+      <CarouselSlide v-for="(list, index) in topRatedList" :key="index + 'e' + list.id">
+        <HeroSection :media="list" />
+        <div class="dots-container"></div>
+      </CarouselSlide>
+    </BaseCarousel>
     <div v-if="!isLoading && trendingMovies.length" class="mt-24">
       <MediaCarousel title="Trending Movies" :medias="trendingMovies" link="/movies" />
     </div>
     <div v-if="!isLoading && trendingTVShows.length" class="mb-16 mt-36">
       <MediaCarousel title="Trending TV Shows" :medias="trendingTVShows" link="/tv-shows" />
     </div>
+  </section>
+  <section v-else class="grid h-screen place-items-center">
+    <EmptyData />
   </section>
 </template>
 
@@ -28,16 +28,19 @@ import { useTVStore } from '@/stores/tv'
 import type { TV } from '@/services/tv/types'
 import { useToast } from '@/components/ui/toast/use-toast'
 
+import BaseSpinnerContainer from '@/components/ui/loader/BaseSpinnerContainer.vue'
+import ApiErrorFallback from '@/components/ui/error/ApiErrorFallback.vue'
+import EmptyData from '@/components/ui/error/EmptyData.vue'
 import BaseCarousel from '@/components/ui/carousel/BaseCarousel.vue'
 import CarouselSlide from '@/components/ui/carousel/CarouselSlide.vue'
 import HeroSection from '@/components/common/HeroSection.vue'
-import BaseSpinner from '@/components/ui/loader/BaseSpinner.vue'
 import MediaCarousel from '@/components/MediaCarousel.vue'
 
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const { toast } = useToast()
 const isLoading = ref<boolean>(false)
+const isError = ref<boolean>(false)
 const topRatedMovies = ref<Movie[]>([])
 const topRatedTVShows = ref<TV[]>([])
 const topRatedList = ref<(Movie | TV)[]>([])
@@ -75,6 +78,7 @@ onUnmounted(() => {
 
 async function fetchData(): Promise<void> {
   isLoading.value = true
+  isError.value = false
   try {
     await Promise.all([
       getTopRatedMovies(),
@@ -84,6 +88,7 @@ async function fetchData(): Promise<void> {
     ])
     combinedArray()
   } catch (error) {
+    isError.value = true
     handleFetchError(error)
   } finally {
     isLoading.value = false

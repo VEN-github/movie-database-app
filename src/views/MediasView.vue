@@ -1,73 +1,72 @@
 <template>
-  <div v-if="isLoading" class="grid h-screen place-items-center">
-    <BaseSpinner />
-  </div>
-  <section v-else-if="!isLoading && medias.length" class="pt-48">
+  <BaseSpinnerContainer v-if="isLoading" />
+  <ApiErrorFallback v-else-if="!isLoading && isError" />
+  <section v-else class="pt-32 sm:pt-36 lg:pt-40 2xl:pt-44">
     <BaseContainer>
-      <div>
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-2">
-            <select v-model="filters.type" class="bg-transparent outline-none">
-              <option class="bg-custom-bg" value="all">All</option>
-              <option class="bg-custom-bg" value="popular">Popular</option>
-              <option class="bg-custom-bg" value="top rated">Top Rated</option>
-            </select>
-            <Separator orientation="vertical" class="!h-4" />
-            <select class="bg-transparent outline-none" @change="handleGenreFilter">
-              <option class="bg-custom-bg" value="">Genre</option>
-              <option
-                v-for="genre in genres"
-                :key="genre.id"
-                class="bg-custom-bg"
-                :value="genre.id"
-              >
-                {{ genre.name }}
-              </option>
-            </select>
-          </div>
-          <div class="space-x-3">
-            <button
-              type="button"
-              class="transition-colors hover:text-custom-primary"
-              :class="{ 'text-custom-primary': layout === 'grid' }"
-              @click="changeLayout('grid')"
-            >
-              <LayoutGrid :size="24" />
-            </button>
-            <button
-              type="button"
-              class="transition-colors hover:text-custom-primary"
-              :class="{ 'text-custom-primary': layout === 'list' }"
-              @click="changeLayout('list')"
-            >
-              <LayoutList :size="24" />
-            </button>
-          </div>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <select v-model="filters.type" class="bg-transparent outline-none">
+            <option class="bg-custom-bg" value="all">All</option>
+            <option class="bg-custom-bg" value="popular">Popular</option>
+            <option class="bg-custom-bg" value="top rated">Top Rated</option>
+          </select>
+          <Separator orientation="vertical" class="!h-4" />
+          <select
+            ref="genreDropdown"
+            class="bg-transparent outline-none"
+            @change="handleGenreFilter"
+          >
+            <option class="bg-custom-bg" value="">Genre</option>
+            <option v-for="genre in genres" :key="genre.id" class="bg-custom-bg" :value="genre.id">
+              {{ genre.name }}
+            </option>
+          </select>
         </div>
-        <div v-if="filteredGenres.length" class="mt-3 flex flex-wrap items-center gap-2">
-          <span
-            v-for="genre in filteredGenres"
-            :key="genre.id"
-            class="flex items-center gap-x-1.5 rounded-full bg-custom-secondary px-3 py-1 text-sm font-medium"
-            >{{ genre.name }}
-            <button type="button" @click="removeFilterGenre(genre.id)"><X :size="13" /></button>
-          </span>
+        <div v-if="filteredMedias.length" class="space-x-3">
+          <button
+            type="button"
+            class="transition-colors hover:text-custom-primary"
+            :class="{ 'text-custom-primary': layout === 'grid' }"
+            @click="changeLayout('grid')"
+          >
+            <LayoutGrid :size="24" />
+          </button>
+          <button
+            type="button"
+            class="transition-colors hover:text-custom-primary"
+            :class="{ 'text-custom-primary': layout === 'list' }"
+            @click="changeLayout('list')"
+          >
+            <LayoutList :size="24" />
+          </button>
         </div>
       </div>
-      <div
-        v-if="layout === 'grid'"
-        class="mt-5 grid place-items-center gap-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-      >
-        <template v-for="media in filteredMedia" :key="media.id">
-          <MediaCardGrid :media="media" :img-width="imgWidth" />
-        </template>
+      <div v-if="filteredGenres.length" class="mt-3 flex flex-wrap items-center gap-2">
+        <span
+          v-for="genre in filteredGenres"
+          :key="genre.id"
+          class="flex items-center gap-x-1.5 rounded-full bg-custom-secondary px-3 py-1 text-sm font-medium"
+          >{{ genre.name }}
+          <button type="button" @click="removeFilterGenre(genre.id)"><X :size="13" /></button>
+        </span>
       </div>
-      <div
-        v-if="layout === 'list'"
-        class="mt-7 grid grid-cols-1 gap-8 md:grid-cols-2 2xl:grid-cols-3"
-      >
-        <MediaCardList v-for="media in filteredMedia" :key="media.id" :media="media" />
-      </div>
+      <template v-if="filteredMedias.length">
+        <div
+          v-if="layout === 'grid'"
+          class="mt-5 grid place-items-center gap-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        >
+          <template v-for="media in filteredMedias" :key="media.id">
+            <MediaCardGrid :media="media" :img-width="imgWidth" />
+          </template>
+        </div>
+        <div
+          v-if="layout === 'list'"
+          class="mt-7 grid grid-cols-1 gap-8 md:grid-cols-2 2xl:grid-cols-3"
+        >
+          <MediaCardList v-for="media in filteredMedias" :key="media.id" :media="media" />
+        </div>
+      </template>
+      <EmptyData v-else class="py-16" />
     </BaseContainer>
   </section>
 </template>
@@ -82,7 +81,9 @@ import type { TV } from '@/services/tv/types'
 import { useCommonStore } from '@/stores/common'
 import { useToast } from '@/components/ui/toast/use-toast'
 
-import BaseSpinner from '@/components/ui/loader/BaseSpinner.vue'
+import BaseSpinnerContainer from '@/components/ui/loader/BaseSpinnerContainer.vue'
+import ApiErrorFallback from '@/components/ui/error/ApiErrorFallback.vue'
+import EmptyData from '@/components/ui/error/EmptyData.vue'
 import BaseContainer from '@/components/ui/container/BaseContainer.vue'
 import MediaCardList from '@/components/MediaCardList.vue'
 import MediaCardGrid from '@/components/MediaCardGrid.vue'
@@ -96,18 +97,20 @@ const commonStore = useCommonStore()
 const { toast } = useToast()
 const medias = ref<(Movie | TV)[]>([])
 const isLoading = ref<boolean>(false)
+const isError = ref<boolean>(false)
 const imgWidth = ref<number>(200)
 const genres = ref<Genre[]>([])
 const filters = reactive({
   type: 'all',
   genres: [] as number[]
 })
+const genreDropdown = ref<HTMLSelectElement | null>(null)
 
 const layout = computed<string>(() => {
   return commonStore.layout
 })
 
-const filteredMedia = computed<(Movie | TV)[]>(() => {
+const filteredMedias = computed<(Movie | TV)[]>(() => {
   if (filters.genres.length === 0) return medias.value
 
   return medias.value.filter((media) => {
@@ -131,9 +134,11 @@ watch(
 
     if (fetchFunction) {
       isLoading.value = true
+      isError.value = false
       try {
         await fetchFunction()
       } catch (error) {
+        isError.value = true
         handleFetchError(error)
       } finally {
         isLoading.value = false
@@ -143,12 +148,24 @@ watch(
   { deep: true }
 )
 
+watch(
+  () => filters.genres,
+  (newValue) => {
+    if (newValue.length === 0 && genreDropdown.value) {
+      genreDropdown.value.selectedIndex = 0
+    }
+  },
+  { deep: true }
+)
+
 watchEffect(async () => {
   isLoading.value = true
+  isError.value = false
   try {
     await fetchAllGenres()
     await fetchAllMedia()
   } catch (error) {
+    isError.value = true
     handleFetchError(error)
   } finally {
     isLoading.value = false
