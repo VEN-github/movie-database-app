@@ -6,30 +6,28 @@
     :style="{ backgroundImage: `url(${media.backdrop_path})` }"
   >
     <div
-      class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-8 pt-32 backdrop-blur-[2px] 2xl:pt-60"
+      class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-8 pt-32 backdrop-blur-[2px] sm:pt-40 xl:pt-60"
     >
       <BaseContainer>
-        <h1 class="text-2xl font-bold 2xl:text-7xl">
-          <span>{{ title }}</span
-          ><span
-            v-if="rating"
-            class="ml-5 rounded bg-custom-primary px-2 text-base font-medium 2xl:text-xl"
-            >{{ rating }}</span
-          >
-        </h1>
+        <h1 class="text-2xl font-bold sm:text-4xl xl:text-7xl">{{ title }}</h1>
         <p
-          class="mt-2 flex flex-wrap items-center gap-x-3 text-sm text-custom-foreground-secondary 2xl:text-base"
+          class="mt-2 flex flex-wrap items-center gap-3 text-sm text-custom-foreground-secondary sm:text-base"
         >
           <span>{{ releaseDate }}</span>
           <Separator v-if="runtime" orientation="vertical" class="!h-3.5" />
           <span v-if="runtime">{{ runtime }}</span>
           <Separator orientation="vertical" class="!h-3.5" />
           <span>{{ formmattedGenres }}</span>
+          <span
+            v-if="rating"
+            class="rounded bg-custom-primary px-2 text-base font-medium text-custom-foreground sm:text-xl"
+            >{{ rating }}</span
+          >
         </p>
-        <p v-if="media.overview" class="mt-5 max-w-3xl 2xl:text-lg">
+        <p v-if="media.overview" class="mt-5 max-w-3xl sm:text-lg">
           {{ media.overview }}
         </p>
-        <div class="mt-8 flex flex-col items-center gap-4 2xl:flex-row">
+        <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
           <VideoTrailerDialog :id="media.id" :media-type="type">
             <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
               ><PlayCircle stroke-width="1.5" :size="20" /><span class="pl-2 font-medium sm:text-lg"
