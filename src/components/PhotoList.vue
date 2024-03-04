@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, onUpdated, onUnmounted } from 'vue'
 import type { Photo } from '@/services/movies/types'
 import { Fancybox } from '@fancyapps/ui'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
@@ -56,5 +56,16 @@ const lastPhoto = computed<Photo>(() => {
 
 onMounted(() => {
   Fancybox.bind('[data-fancybox="gallery"]', {})
+})
+
+onUpdated(() => {
+  Fancybox.unbind('[data-fancybox="gallery"]')
+  Fancybox.close()
+
+  Fancybox.bind('[data-fancybox="gallery"]', {})
+})
+
+onUnmounted(() => {
+  Fancybox.destroy()
 })
 </script>

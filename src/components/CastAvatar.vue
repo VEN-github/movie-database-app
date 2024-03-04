@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, onUpdated, onUnmounted } from 'vue'
 import type { Cast, Photo } from '@/services/movies/types'
 import { Fancybox } from '@fancyapps/ui'
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
@@ -61,5 +61,16 @@ const formattedCasts = computed<Cast<Photo>[]>(() => {
 
 onMounted(() => {
   Fancybox.bind('[data-fancybox="cast"]', {})
+})
+
+onUpdated(() => {
+  Fancybox.unbind('[data-fancybox="cast"]')
+  Fancybox.close()
+
+  Fancybox.bind('[data-fancybox="cast"]', {})
+})
+
+onUnmounted(() => {
+  Fancybox.destroy()
 })
 </script>
