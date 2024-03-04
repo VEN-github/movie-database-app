@@ -34,6 +34,10 @@ async function getCasts(id: number) {
   return await api.get(`/movie/${id}/credits?language=en-US`)
 }
 
+async function getMoviePhotos(id: number) {
+  return await api.get(`/movie/${id}/images`)
+}
+
 export default {
   getMovies,
   getMovie,
@@ -42,5 +46,6 @@ export default {
   getTrendingMovies,
   getGenres,
   getVideos,
-  getCasts
+  getCasts,
+  getMoviePhotos
 }

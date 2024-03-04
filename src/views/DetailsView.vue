@@ -6,7 +6,7 @@
     :style="{ backgroundImage: `url(${media.backdrop_path})` }"
   >
     <div
-      class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-8 pt-32 backdrop-blur-[2px] sm:pt-40 xl:pt-60"
+      class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-16 pt-32 backdrop-blur-sm sm:pt-40"
     >
       <BaseContainer>
         <h1 class="text-2xl font-bold sm:text-4xl xl:text-7xl">{{ title }}</h1>
@@ -44,9 +44,16 @@
         <div v-if="casts.length" class="mt-5 sm:mt-10">
           <h2 class="text-xl">Cast</h2>
           <div
-            class="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:mt-8 sm:grid-cols-5 sm:items-start md:gap-6 lg:flex"
+            class="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-5 sm:items-start md:gap-6 lg:flex"
           >
             <CastAvatar :casts="casts" />
+          </div>
+        </div>
+        <div v-if="photos.length" class="mt-10">
+          <h2 class="text-xl">Photos</h2>
+
+          <div class="mt-5 flex flex-wrap items-center gap-4">
+            <PhotoList :photos="photos" />
           </div>
         </div>
       </BaseContainer>
@@ -70,6 +77,7 @@ import VideoTrailerDialog from '@/components/VideoTrailerDialog.vue'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
 import CastAvatar from '@/components/CastAvatar.vue'
+import PhotoList from '@/components/PhotoList.vue'
 
 const props = defineProps<{
   type: string
@@ -81,6 +89,7 @@ const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const media = ref<Movie | TV | null>(null)
 const casts = ref<Cast[]>([])
+const photos = ref<string[]>([])
 const isLoading = ref<boolean>(false)
 
 const convertedId = computed<number>(() => {
@@ -145,9 +154,9 @@ onBeforeMount(async () => {
   isLoading.value = true
   try {
     if (props.type === 'movie') {
-      await Promise.all([getMovie(), getMovieCasts()])
+      await Promise.all([getMovie(), getMovieCasts(), getMoviePhotos()])
     } else if (props.type === 'tv-show') {
-      await Promise.all([getTVShow(), getTVShowCasts()])
+      await Promise.all([getTVShow(), getTVShowCasts(), getTVShowPhotos()])
     }
   } catch (error) {
     router.push('/404')
@@ -166,6 +175,11 @@ async function getMovieCasts(): Promise<void> {
   casts.value = movieStore.casts
 }
 
+async function getMoviePhotos(): Promise<void> {
+  await movieStore.getMoviePhotos(convertedId.value)
+  photos.value = movieStore.photos
+}
+
 async function getTVShow(): Promise<void> {
   await tvStore.getTVShow(convertedId.value)
   media.value = tvStore.tvShow
@@ -174,5 +188,10 @@ async function getTVShow(): Promise<void> {
 async function getTVShowCasts(): Promise<void> {
   await tvStore.getCasts(convertedId.value)
   casts.value = tvStore.casts
+}
+
+async function getTVShowPhotos(): Promise<void> {
+  await tvStore.getTVShowPhotos(convertedId.value)
+  photos.value = tvStore.photos
 }
 </script>

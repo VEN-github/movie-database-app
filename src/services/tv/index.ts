@@ -34,6 +34,10 @@ async function getCasts(id: number) {
   return await api.get(`/tv/${id}/credits?language=en-US`)
 }
 
+async function getTVShowPhotos(id: number) {
+  return await api.get(`/tv/${id}/images`)
+}
+
 export default {
   getTVShows,
   getTVShow,
@@ -42,5 +46,6 @@ export default {
   getTrendingTVShows,
   getGenres,
   getVideos,
-  getCasts
+  getCasts,
+  getTVShowPhotos
 }

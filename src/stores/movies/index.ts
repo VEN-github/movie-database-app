@@ -15,6 +15,7 @@ export const useMovieStore = defineStore('movie', () => {
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
   const casts = ref<Cast[]>([])
+  const photos = ref<string[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -91,6 +92,18 @@ export const useMovieStore = defineStore('movie', () => {
     try {
       const { data } = await API.movies.getCasts(id)
       casts.value = initCast(data.cast)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
+  async function getMoviePhotos(id: number): Promise<void> {
+    try {
+      const { data } = await API.movies.getMoviePhotos(id)
+      photos.value = data.backdrops.map(
+        ({ file_path }: { file_path: string }) => `${BACKDROP_URL.small}${file_path}`
+      )
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -180,6 +193,7 @@ export const useMovieStore = defineStore('movie', () => {
     genres,
     video,
     casts,
+    photos,
     getGenres,
     getMovies,
     getMovie,
@@ -187,6 +201,7 @@ export const useMovieStore = defineStore('movie', () => {
     getTopRatedMovies,
     getTrendingMovies,
     getVideos,
-    getCasts
+    getCasts,
+    getMoviePhotos
   }
 })
