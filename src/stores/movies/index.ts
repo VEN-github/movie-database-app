@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
-import type { Movie, Genre, Video, Cast } from '@/services/movies/types'
+import type { Movie, Genre, Video, Cast, Photo } from '@/services/movies/types'
 import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL, PROFILE_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
@@ -15,7 +15,7 @@ export const useMovieStore = defineStore('movie', () => {
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
   const casts = ref<Cast[]>([])
-  const photos = ref<string[]>([])
+  const photos = ref<Photo[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -101,9 +101,12 @@ export const useMovieStore = defineStore('movie', () => {
   async function getMoviePhotos(id: number): Promise<void> {
     try {
       const { data } = await API.movies.getMoviePhotos(id)
-      photos.value = data.backdrops.map(
-        ({ file_path }: { file_path: string }) => `${BACKDROP_URL.small}${file_path}`
-      )
+      photos.value = data.backdrops.map(({ file_path }: { file_path: string }) => {
+        return {
+          small: `${BACKDROP_URL.small}${file_path}`,
+          original: `${BACKDROP_URL.original}${file_path}`
+        }
+      })
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)

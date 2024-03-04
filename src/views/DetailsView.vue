@@ -65,7 +65,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movies'
-import type { Movie, Cast } from '@/services/movies/types'
+import type { Movie, Cast, Photo } from '@/services/movies/types'
 import { useTVStore } from '@/stores/tv'
 import type { TV } from '@/services/tv/types'
 import dayjs from 'dayjs'
@@ -89,7 +89,7 @@ const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const media = ref<Movie | TV | null>(null)
 const casts = ref<Cast[]>([])
-const photos = ref<string[]>([])
+const photos = ref<Photo[]>([])
 const isLoading = ref<boolean>(false)
 
 const convertedId = computed<number>(() => {

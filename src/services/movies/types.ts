@@ -30,3 +30,8 @@ export type Cast = {
   character: string
   profile_path: string
 }
+
+export type Photo = {
+  small: string
+  original: string
+}
