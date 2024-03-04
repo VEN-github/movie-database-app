@@ -16,6 +16,7 @@ export const useTVStore = defineStore('tv', () => {
   const video = ref<Video | null>(null)
   const casts = ref<Cast<Photo>[]>([])
   const photos = ref<Photo[]>([])
+  const similarTVShows = ref<TV[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -113,6 +114,16 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
+  async function getSimilarTVShows(id: number): Promise<void> {
+    try {
+      const { data } = await API.tv.getSimilarTVShows(id)
+      similarTVShows.value = initTVShows(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
   function initGenres(data: Genre[]): void {
     genres.value = data
   }
@@ -203,6 +214,7 @@ export const useTVStore = defineStore('tv', () => {
     video,
     casts,
     photos,
+    similarTVShows,
     getGenres,
     getTVShows,
     getTVShow,
@@ -211,6 +223,7 @@ export const useTVStore = defineStore('tv', () => {
     getTrendingTVShows,
     getVideos,
     getCasts,
-    getTVShowPhotos
+    getTVShowPhotos,
+    getSimilarTVShows
   }
 })

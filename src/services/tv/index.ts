@@ -38,6 +38,10 @@ async function getTVShowPhotos(id: number) {
   return await api.get(`/tv/${id}/images`)
 }
 
+async function getSimilarTVShows(id: number) {
+  return await api.get<APIResponse<TV[]>>(`/tv/${id}/recommendations?language=en-US`)
+}
+
 export default {
   getTVShows,
   getTVShow,
@@ -47,5 +51,6 @@ export default {
   getGenres,
   getVideos,
   getCasts,
-  getTVShowPhotos
+  getTVShowPhotos,
+  getSimilarTVShows
 }

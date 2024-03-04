@@ -1,7 +1,7 @@
 <template>
   <BaseContainer>
-    <div class="mb-8 flex items-center justify-between">
-      <div class="flex items-center gap-x-4">
+    <div class="mb-8" :class="{ 'flex items-center justify-between': link }">
+      <div class="flex items-center gap-x-4" :class="{ 'justify-between ': !link }">
         <h2 class="text-sm font-semibold xs:text-lg sm:text-2xl xl:text-3xl 2xl:text-4xl">
           {{ title }}
         </h2>
@@ -23,6 +23,7 @@
         </div>
       </div>
       <RouterLink
+        v-if="link"
         :to="link"
         class="flex items-center gap-x-1 text-sm font-medium text-custom-secondary sm:text-base"
         >View all <ChevronRight :size="18"
@@ -59,7 +60,7 @@ import MediaCardGrid from './MediaCardGrid.vue'
 defineProps<{
   title: string
   medias: (Movie | TV)[]
-  link: string
+  link?: string
 }>()
 
 const carouselEl = ref<InstanceType<typeof BaseCarousel> | null>(null)

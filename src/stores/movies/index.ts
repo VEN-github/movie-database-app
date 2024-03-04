@@ -16,6 +16,7 @@ export const useMovieStore = defineStore('movie', () => {
   const video = ref<Video | null>(null)
   const casts = ref<Cast<Photo>[]>([])
   const photos = ref<Photo[]>([])
+  const similarMovies = ref<Movie[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -113,6 +114,16 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  async function getSimilarMovies(id: number): Promise<void> {
+    try {
+      const { data } = await API.movies.getSimilarMovies(id)
+      similarMovies.value = initMovies(data.results)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
   function initGenres(data: Genre[]): void {
     genres.value = data
   }
@@ -203,6 +214,7 @@ export const useMovieStore = defineStore('movie', () => {
     video,
     casts,
     photos,
+    similarMovies,
     getGenres,
     getMovies,
     getMovie,
@@ -211,6 +223,7 @@ export const useMovieStore = defineStore('movie', () => {
     getTrendingMovies,
     getVideos,
     getCasts,
-    getMoviePhotos
+    getMoviePhotos,
+    getSimilarMovies
   }
 })

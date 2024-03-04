@@ -38,6 +38,10 @@ async function getMoviePhotos(id: number) {
   return await api.get(`/movie/${id}/images`)
 }
 
+async function getSimilarMovies(id: number) {
+  return await api.get<APIResponse<Movie[]>>(`/movie/${id}/recommendations?language=en-US`)
+}
+
 export default {
   getMovies,
   getMovie,
@@ -47,5 +51,6 @@ export default {
   getGenres,
   getVideos,
   getCasts,
-  getMoviePhotos
+  getMoviePhotos,
+  getSimilarMovies
 }

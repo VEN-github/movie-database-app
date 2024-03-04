@@ -1,66 +1,71 @@
 <template>
   <BaseSpinnerContainer v-if="isLoading" />
-  <section
-    v-else-if="!isLoading && media"
-    class="min-h-screen w-full bg-cover bg-center bg-no-repeat"
-    :style="{ backgroundImage: `url(${media.backdrop_path})` }"
-  >
-    <div
-      class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-16 pt-32 backdrop-blur-sm sm:pt-40"
+  <div v-else-if="!isLoading && media">
+    <section
+      class="min-h-screen w-full bg-cover bg-center bg-no-repeat"
+      :style="{ backgroundImage: `url(${media.backdrop_path})` }"
     >
-      <BaseContainer>
-        <h1 class="text-2xl font-bold sm:text-4xl xl:text-7xl">{{ title }}</h1>
-        <p
-          class="mt-2 flex flex-wrap items-center gap-3 text-sm text-custom-foreground-secondary sm:text-base"
-        >
-          <span>{{ releaseDate }}</span>
-          <Separator v-if="runtime" orientation="vertical" class="!h-3.5" />
-          <span v-if="runtime">{{ runtime }}</span>
-          <Separator orientation="vertical" class="!h-3.5" />
-          <span>{{ formmattedGenres }}</span>
-          <span
-            v-if="rating"
-            class="rounded bg-custom-primary px-2 text-base font-medium text-custom-foreground sm:text-xl"
-            >{{ rating }}</span
+      <div
+        class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-16 pt-32 backdrop-blur-sm sm:pt-40"
+      >
+        <BaseContainer>
+          <h1 class="text-2xl font-bold sm:text-4xl xl:text-7xl">{{ title }}</h1>
+          <p
+            class="mt-2 flex flex-wrap items-center gap-3 text-sm text-custom-foreground-secondary sm:text-base"
           >
-        </p>
-        <p v-if="media.overview" class="mt-5 max-w-3xl sm:text-lg">
-          {{ media.overview }}
-        </p>
-        <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
-          <VideoTrailerDialog :id="media.id" :media-type="type">
-            <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
-              ><PlayCircle stroke-width="1.5" :size="20" /><span class="pl-2 font-medium sm:text-lg"
-                >Watch Trailer</span
+            <span>{{ releaseDate }}</span>
+            <Separator v-if="runtime" orientation="vertical" class="!h-3.5" />
+            <span v-if="runtime">{{ runtime }}</span>
+            <Separator orientation="vertical" class="!h-3.5" />
+            <span>{{ formmattedGenres }}</span>
+            <span
+              v-if="rating"
+              class="rounded bg-custom-primary px-2 text-base font-medium text-custom-foreground sm:text-xl"
+              >{{ rating }}</span
+            >
+          </p>
+          <p v-if="media.overview" class="mt-5 max-w-3xl sm:text-lg">
+            {{ media.overview }}
+          </p>
+          <div class="mt-8 flex flex-col items-center gap-4 sm:flex-row">
+            <VideoTrailerDialog :id="media.id" :media-type="type">
+              <Button class="rounded-full bg-custom-primary hover:bg-custom-primary/90"
+                ><PlayCircle stroke-width="1.5" :size="20" /><span
+                  class="pl-2 font-medium sm:text-lg"
+                  >Watch Trailer</span
+                ></Button
+              >
+            </VideoTrailerDialog>
+            <Button variant="ghost" class="rounded-full"
+              ><PlusCircle stroke-width="1.5" :size="18" /><span class="pl-2 font-medium sm:text-lg"
+                >My List</span
               ></Button
             >
-          </VideoTrailerDialog>
-          <Button variant="ghost" class="rounded-full"
-            ><PlusCircle stroke-width="1.5" :size="18" /><span class="pl-2 font-medium sm:text-lg"
-              >My List</span
-            ></Button
-          >
-        </div>
-        <div v-if="casts.length" class="mt-5 sm:mt-10">
-          <h2 class="text-xl">Cast</h2>
-          <div
-            class="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-5 sm:items-start md:gap-6 lg:flex"
-          >
-            <CastAvatar :casts="casts" />
           </div>
-        </div>
-        <div v-if="photos.length" class="mt-10">
-          <h2 class="text-xl">Photos</h2>
+          <div v-if="casts.length" class="mt-5 sm:mt-10">
+            <h2 class="text-xl">Cast</h2>
+            <div
+              class="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-5 sm:items-start md:gap-6 lg:flex"
+            >
+              <CastAvatar :casts="casts" />
+            </div>
+          </div>
+          <div v-if="photos.length" class="mt-10">
+            <h2 class="text-xl">Photos</h2>
 
-          <div
-            class="mt-5 grid grid-cols-2 place-items-center gap-4 sm:flex sm:flex-wrap sm:items-center"
-          >
-            <PhotoList :photos="photos" />
+            <div
+              class="mt-5 grid grid-cols-2 place-items-center gap-4 sm:flex sm:flex-wrap sm:items-center"
+            >
+              <PhotoList :photos="photos" />
+            </div>
           </div>
-        </div>
-      </BaseContainer>
-    </div>
-  </section>
+        </BaseContainer>
+      </div>
+    </section>
+    <section v-if="similarMedias.length" class="mb-16 mt-36">
+      <MediaCarousel title="You might also like" :medias="similarMedias" />
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -80,6 +85,7 @@ import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
 import CastAvatar from '@/components/CastAvatar.vue'
 import PhotoList from '@/components/PhotoList.vue'
+import MediaCarousel from '@/components/MediaCarousel.vue'
 
 const props = defineProps<{
   type: string
@@ -92,6 +98,7 @@ const tvStore = useTVStore()
 const media = ref<Movie | TV | null>(null)
 const casts = ref<Cast<Photo>[]>([])
 const photos = ref<Photo[]>([])
+const similarMedias = ref<(Movie | TV)[]>([])
 const isLoading = ref<boolean>(false)
 
 const convertedId = computed<number>(() => {
@@ -156,9 +163,9 @@ onBeforeMount(async () => {
   isLoading.value = true
   try {
     if (props.type === 'movie') {
-      await Promise.all([getMovie(), getMovieCasts(), getMoviePhotos()])
+      await Promise.all([getMovie(), getMovieCasts(), getMoviePhotos(), getSimilarMovies()])
     } else if (props.type === 'tv-show') {
-      await Promise.all([getTVShow(), getTVShowCasts(), getTVShowPhotos()])
+      await Promise.all([getTVShow(), getTVShowCasts(), getTVShowPhotos(), getSimilarTVShows()])
     }
   } catch (error) {
     router.push('/404')
@@ -182,6 +189,11 @@ async function getMoviePhotos(): Promise<void> {
   photos.value = movieStore.photos
 }
 
+async function getSimilarMovies(): Promise<void> {
+  await movieStore.getSimilarMovies(convertedId.value)
+  similarMedias.value = movieStore.similarMovies
+}
+
 async function getTVShow(): Promise<void> {
   await tvStore.getTVShow(convertedId.value)
   media.value = tvStore.tvShow
@@ -195,5 +207,10 @@ async function getTVShowCasts(): Promise<void> {
 async function getTVShowPhotos(): Promise<void> {
   await tvStore.getTVShowPhotos(convertedId.value)
   photos.value = tvStore.photos
+}
+
+async function getSimilarTVShows(): Promise<void> {
+  await tvStore.getSimilarTVShows(convertedId.value)
+  similarMedias.value = tvStore.similarTVShows
 }
 </script>
