@@ -52,7 +52,9 @@
         <div v-if="photos.length" class="mt-10">
           <h2 class="text-xl">Photos</h2>
 
-          <div class="mt-5 flex flex-wrap items-center gap-4">
+          <div
+            class="mt-5 grid grid-cols-2 place-items-center gap-4 sm:flex sm:flex-wrap sm:items-center"
+          >
             <PhotoList :photos="photos" />
           </div>
         </div>
