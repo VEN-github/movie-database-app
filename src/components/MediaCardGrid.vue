@@ -1,8 +1,8 @@
 <template>
   <div class="flex h-full w-fit flex-col">
-    <RouterLink :to="`/${slug}/${media.id}`" class="group">
+    <RouterLink :to="`/${slug}/${media.id}`" class="group grow">
       <img
-        class="grow rounded-lg object-cover object-center drop-shadow-2xl transition-opacity group-hover:opacity-70"
+        class="h-full grow rounded-lg object-cover object-center drop-shadow-2xl transition-opacity group-hover:opacity-70"
         :src="media.poster_path"
         :alt="title"
         :width="imgWidth"
