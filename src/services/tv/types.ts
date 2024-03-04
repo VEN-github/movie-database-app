@@ -24,14 +24,16 @@ export type Video = {
   site: string
 }
 
-export type Cast = {
+export type Cast<T> = {
   readonly id: string
   name: string
   character: string
-  profile_path: string
+  profile_path: T
 }
 
 export type Photo = {
-  small: string
-  original: string
+  small?: string
+  medium?: string
+  large?: string
+  original?: string
 }

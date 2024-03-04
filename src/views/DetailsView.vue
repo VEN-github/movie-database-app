@@ -88,7 +88,7 @@ const router = useRouter()
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const media = ref<Movie | TV | null>(null)
-const casts = ref<Cast[]>([])
+const casts = ref<Cast<Photo>[]>([])
 const photos = ref<Photo[]>([])
 const isLoading = ref<boolean>(false)
 

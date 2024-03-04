@@ -16,6 +16,7 @@ export const POSTER_URL = {
 }
 
 export const DEFAULT_POSTER_URL = {
+  medium: 'https://placehold.co/185x280?text=' + encodeURIComponent('No\nImage\nAvailable'),
   large: 'https://placehold.co/300x400?text=' + encodeURIComponent('No\nImage\nAvailable')
 }
 

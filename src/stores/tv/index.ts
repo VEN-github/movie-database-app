@@ -14,7 +14,7 @@ export const useTVStore = defineStore('tv', () => {
   const trendingTVShows = ref<TV[]>([])
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
-  const casts = ref<Cast[]>([])
+  const casts = ref<Cast<Photo>[]>([])
   const photos = ref<Photo[]>([])
 
   async function getGenres(): Promise<void> {
@@ -172,15 +172,21 @@ export const useTVStore = defineStore('tv', () => {
     video.value = { id, name, key, type, site }
   }
 
-  function initCast(data: Cast[]): Cast[] {
-    const results = data.map((item: Cast) => {
+  function initCast(data: Cast<Photo>[]): Cast<Photo>[] {
+    const results = data.map((item: Cast<Photo>) => {
       return {
         id: item.id,
         name: item.name,
         character: item.character,
         profile_path: item.profile_path
-          ? `${PROFILE_URL.medium}${item.profile_path}`
-          : DEFAULT_POSTER_URL.large
+          ? {
+              medium: `${PROFILE_URL.medium}${item.profile_path}`,
+              large: `${PROFILE_URL.large}${item.profile_path}`
+            }
+          : {
+              medium: DEFAULT_POSTER_URL.medium,
+              large: DEFAULT_POSTER_URL.large
+            }
       }
     })
 

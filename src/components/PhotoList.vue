@@ -31,11 +31,7 @@
       data-fancybox="gallery"
       :href="photo.original"
     >
-      <img
-        :src="photo.small"
-        :alt="photo.small"
-        class="w-28 rounded-lg object-cover object-center drop-shadow-2xl xs:w-36"
-      />
+      <img :src="photo.small" :alt="photo.small" />
     </a>
   </div>
 </template>
