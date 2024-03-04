@@ -30,6 +30,10 @@ async function getVideos(id: number) {
   return await api.get<APIResponse<Video[]>>(`/tv/${id}/videos?language=en-US`)
 }
 
+async function getCasts(id: number) {
+  return await api.get(`/tv/${id}/credits?language=en-US`)
+}
+
 export default {
   getTVShows,
   getTVShow,
@@ -37,5 +41,6 @@ export default {
   getTopRatedTVShows,
   getTrendingTVShows,
   getGenres,
-  getVideos
+  getVideos,
+  getCasts
 }

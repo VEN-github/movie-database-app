@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
-import type { Movie, Genre, Video } from '@/services/movies/types'
-import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL } from '@/constants/image'
+import type { Movie, Genre, Video, Cast } from '@/services/movies/types'
+import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL, PROFILE_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
@@ -14,6 +14,7 @@ export const useMovieStore = defineStore('movie', () => {
   const topRatedMovies = ref<Movie[]>([])
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
+  const casts = ref<Cast[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -86,6 +87,16 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
+  async function getCasts(id: number): Promise<void> {
+    try {
+      const { data } = await API.movies.getCasts(id)
+      casts.value = initCast(data.cast)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
   function initGenres(data: Genre[]): void {
     genres.value = data
   }
@@ -145,6 +156,21 @@ export const useMovieStore = defineStore('movie', () => {
     video.value = { id, name, key, type, site }
   }
 
+  function initCast(data: Cast[]): Cast[] {
+    const results = data.map((item: Cast) => {
+      return {
+        id: item.id,
+        name: item.name,
+        character: item.character,
+        profile_path: item.profile_path
+          ? `${PROFILE_URL.medium}${item.profile_path}`
+          : DEFAULT_POSTER_URL.large
+      }
+    })
+
+    return results
+  }
+
   return {
     movies,
     movie,
@@ -153,12 +179,14 @@ export const useMovieStore = defineStore('movie', () => {
     trendingMovies,
     genres,
     video,
+    casts,
     getGenres,
     getMovies,
     getMovie,
     getPopularMovies,
     getTopRatedMovies,
     getTrendingMovies,
-    getVideos
+    getVideos,
+    getCasts
   }
 })

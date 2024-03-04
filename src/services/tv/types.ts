@@ -23,3 +23,10 @@ export type Video = {
   type: string
   site: string
 }
+
+export type Cast = {
+  readonly id: string
+  name: string
+  character: string
+  profile_path: string
+}

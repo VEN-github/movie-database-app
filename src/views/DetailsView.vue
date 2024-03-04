@@ -41,6 +41,14 @@
             ></Button
           >
         </div>
+        <div v-if="casts.length" class="mt-5 sm:mt-10">
+          <h2 class="text-xl">Cast</h2>
+          <div
+            class="mt-5 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:mt-8 sm:grid-cols-5 sm:items-start md:gap-6 lg:flex"
+          >
+            <CastAvatar :casts="casts" />
+          </div>
+        </div>
       </BaseContainer>
     </div>
   </section>
@@ -50,7 +58,7 @@
 import { ref, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movies'
-import type { Movie } from '@/services/movies/types'
+import type { Movie, Cast } from '@/services/movies/types'
 import { useTVStore } from '@/stores/tv'
 import type { TV } from '@/services/tv/types'
 import dayjs from 'dayjs'
@@ -61,6 +69,7 @@ import { Separator } from '@/components/ui/separator'
 import VideoTrailerDialog from '@/components/VideoTrailerDialog.vue'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, PlayCircle } from 'lucide-vue-next'
+import CastAvatar from '@/components/CastAvatar.vue'
 
 const props = defineProps<{
   type: string
@@ -71,6 +80,7 @@ const router = useRouter()
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const media = ref<Movie | TV | null>(null)
+const casts = ref<Cast[]>([])
 const isLoading = ref<boolean>(false)
 
 const convertedId = computed<number>(() => {
@@ -135,9 +145,9 @@ onBeforeMount(async () => {
   isLoading.value = true
   try {
     if (props.type === 'movie') {
-      await getMovie()
+      await Promise.all([getMovie(), getMovieCasts()])
     } else if (props.type === 'tv-show') {
-      await getTVShow()
+      await Promise.all([getTVShow(), getTVShowCasts()])
     }
   } catch (error) {
     router.push('/404')
@@ -151,8 +161,18 @@ async function getMovie(): Promise<void> {
   media.value = movieStore.movie
 }
 
+async function getMovieCasts(): Promise<void> {
+  await movieStore.getCasts(convertedId.value)
+  casts.value = movieStore.casts
+}
+
 async function getTVShow(): Promise<void> {
   await tvStore.getTVShow(convertedId.value)
   media.value = tvStore.tvShow
+}
+
+async function getTVShowCasts(): Promise<void> {
+  await tvStore.getCasts(convertedId.value)
+  casts.value = tvStore.casts
 }
 </script>

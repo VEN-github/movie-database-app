@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { API } from '@/services'
-import type { TV, Genre, Video } from '@/services/tv/types'
-import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL } from '@/constants/image'
+import type { TV, Genre, Video, Cast } from '@/services/tv/types'
+import { BACKDROP_URL, POSTER_URL, DEFAULT_POSTER_URL, PROFILE_URL } from '@/constants/image'
 import type { AxiosError } from 'axios'
 import { handleApiError } from '@/composables/handleApiError'
 
@@ -14,6 +14,7 @@ export const useTVStore = defineStore('tv', () => {
   const trendingTVShows = ref<TV[]>([])
   const genres = ref<Genre[]>([])
   const video = ref<Video | null>(null)
+  const casts = ref<Cast[]>([])
 
   async function getGenres(): Promise<void> {
     try {
@@ -86,6 +87,16 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
+  async function getCasts(id: number): Promise<void> {
+    try {
+      const { data } = await API.tv.getCasts(id)
+      casts.value = initCast(data.cast)
+    } catch (error) {
+      const _error = error as AxiosError<string>
+      handleApiError(_error.response?.status)
+    }
+  }
+
   function initGenres(data: Genre[]): void {
     genres.value = data
   }
@@ -145,6 +156,21 @@ export const useTVStore = defineStore('tv', () => {
     video.value = { id, name, key, type, site }
   }
 
+  function initCast(data: Cast[]): Cast[] {
+    const results = data.map((item: Cast) => {
+      return {
+        id: item.id,
+        name: item.name,
+        character: item.character,
+        profile_path: item.profile_path
+          ? `${PROFILE_URL.medium}${item.profile_path}`
+          : DEFAULT_POSTER_URL.large
+      }
+    })
+
+    return results
+  }
+
   return {
     tvShows,
     tvShow,
@@ -153,12 +179,14 @@ export const useTVStore = defineStore('tv', () => {
     trendingTVShows,
     genres,
     video,
+    casts,
     getGenres,
     getTVShows,
     getTVShow,
     getPopularTVShows,
     getTopRatedTVShows,
     getTrendingTVShows,
-    getVideos
+    getVideos,
+    getCasts
   }
 })

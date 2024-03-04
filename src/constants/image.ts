@@ -18,3 +18,10 @@ export const POSTER_URL = {
 export const DEFAULT_POSTER_URL = {
   large: 'https://placehold.co/300x400?text=' + encodeURIComponent('No\nImage\nAvailable')
 }
+
+export const PROFILE_URL = {
+  small: 'https://image.tmdb.org/t/p/w45',
+  medium: 'https://image.tmdb.org/t/p/w185',
+  large: 'https://image.tmdb.org/t/p/h632',
+  original: 'https://image.tmdb.org/t/p/original'
+}
