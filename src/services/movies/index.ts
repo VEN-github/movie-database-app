@@ -2,8 +2,8 @@ import api from '@/services/api'
 import type { APIResponse } from '@/services/types'
 import type { Movie, Video } from './types'
 
-async function getMovies() {
-  return await api.get<APIResponse<Movie[]>>('/discover/movie')
+async function getMovies(page: number) {
+  return await api.get<APIResponse<Movie[]>>(`/discover/movie?page=${page}`)
 }
 
 async function getMovie(id: number) {

@@ -65,6 +65,33 @@
         >
           <MediaCardList v-for="media in filteredMedias" :key="media.id" :media="media" />
         </div>
+        <div class="mb-8 mt-16 flex justify-center">
+          <Pagination :total="42809" :sibling-count="1" show-edges :default-page="1">
+            <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+              <PaginationFirst class="bg-transparent" />
+              <PaginationPrev class="bg-transparent" />
+              <template v-for="(item, index) in items">
+                <PaginationListItem
+                  v-if="item.type === 'page'"
+                  :key="index"
+                  :value="item.value"
+                  as-child
+                >
+                  <Button
+                    class="h-10 w-10 p-0"
+                    :class="{ 'bg-custom-primary': item.value === currentPage }"
+                    @click="router.push({ path: route.path, query: { page: item.value } })"
+                  >
+                    {{ item.value }}
+                  </Button>
+                </PaginationListItem>
+                <PaginationEllipsis v-else :key="item.type" :index="index" />
+              </template>
+              <PaginationNext class="bg-transparent" />
+              <PaginationLast class="bg-transparent" />
+            </PaginationList>
+          </Pagination>
+        </div>
       </template>
       <EmptyData v-else class="py-16" />
     </BaseContainer>
@@ -73,7 +100,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, watchEffect, onMounted, onUnmounted, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie, Genre } from '@/services/movies/types'
 import { useTVStore } from '@/stores/tv'
@@ -89,8 +116,20 @@ import MediaCardList from '@/components/MediaCardList.vue'
 import MediaCardGrid from '@/components/MediaCardGrid.vue'
 import { X, LayoutGrid, LayoutList } from 'lucide-vue-next'
 import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev
+} from '@/components/ui/pagination'
 
 const route = useRoute()
+const router = useRouter()
 const movieStore = useMovieStore()
 const tvStore = useTVStore()
 const commonStore = useCommonStore()
@@ -105,6 +144,7 @@ const filters = reactive({
   genres: [] as number[]
 })
 const genreDropdown = ref<HTMLSelectElement | null>(null)
+const currentPage = ref<number>(1)
 
 const layout = computed<string>(() => {
   return commonStore.layout
@@ -114,7 +154,7 @@ const filteredMedias = computed<(Movie | TV)[]>(() => {
   if (filters.genres.length === 0) return medias.value
 
   return medias.value.filter((media) => {
-    return media.genre_ids.some((genreId) => filters.genres.includes(genreId))
+    return media.genre_ids?.some((genreId) => filters.genres.includes(genreId))
   })
 })
 
