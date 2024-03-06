@@ -33,7 +33,7 @@ async function toggleTrailer(): Promise<void> {
       await movieStore.getVideos(props.id)
       video.value = movieStore.video
     }
-    if (props.mediaType === 'tv') {
+    if (props.mediaType === 'tv-show') {
       await tvStore.getVideos(props.id)
       video.value = tvStore.video
     }
