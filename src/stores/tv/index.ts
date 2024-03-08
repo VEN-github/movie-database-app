@@ -28,9 +28,9 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
-  async function getTVShows(): Promise<void> {
+  async function getTVShows(page: number): Promise<void> {
     try {
-      const { data } = await API.tv.getTVShows()
+      const { data } = await API.tv.getTVShows(page)
       tvShows.value = initTVShows(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
@@ -48,9 +48,9 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
-  async function getPopularTVShows(): Promise<void> {
+  async function getPopularTVShows(page: number): Promise<void> {
     try {
-      const { data } = await API.tv.getPopularTVShows()
+      const { data } = await API.tv.getPopularTVShows(page)
       popularTVShows.value = initTVShows(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
@@ -58,10 +58,10 @@ export const useTVStore = defineStore('tv', () => {
     }
   }
 
-  async function getTopRatedTVShows(): Promise<void> {
+  async function getTopRatedTVShows(page: number): Promise<void> {
     try {
       await getGenres()
-      const { data } = await API.tv.getTopRatedTVShows()
+      const { data } = await API.tv.getTopRatedTVShows(page)
       topRatedTVShows.value = initTVShows(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>

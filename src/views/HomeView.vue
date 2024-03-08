@@ -96,12 +96,12 @@ async function fetchData(): Promise<void> {
 }
 
 async function getTopRatedMovies(): Promise<void> {
-  await movieStore.getTopRatedMovies()
+  await movieStore.getTopRatedMovies(1)
   topRatedMovies.value = movieStore.topRatedMovies
 }
 
 async function getTopRatedTVShows(): Promise<void> {
-  await tvStore.getTopRatedTVShows()
+  await tvStore.getTopRatedTVShows(1)
   topRatedTVShows.value = tvStore.topRatedTVShows
 }
 

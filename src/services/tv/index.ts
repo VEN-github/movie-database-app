@@ -2,20 +2,20 @@ import api from '@/services/api'
 import type { APIResponse } from '@/services/types'
 import type { TV, Video } from './types'
 
-async function getTVShows() {
-  return await api.get<APIResponse<TV[]>>('/discover/tv')
+async function getTVShows(page: number) {
+  return await api.get<APIResponse<TV[]>>(`/discover/tv?page=${page}`)
 }
 
 async function getTVShow(id: number) {
   return await api.get<TV>(`/tv/${id}?language=en-US`)
 }
 
-async function getPopularTVShows() {
-  return await api.get<APIResponse<TV[]>>('/tv/popular?language=en-US')
+async function getPopularTVShows(page: number) {
+  return await api.get<APIResponse<TV[]>>(`/tv/popular?language=en-US&page=${page}`)
 }
 
-async function getTopRatedTVShows() {
-  return await api.get<APIResponse<TV[]>>('/tv/top_rated?language=en-US')
+async function getTopRatedTVShows(page: number) {
+  return await api.get<APIResponse<TV[]>>(`/tv/top_rated?language=en-US&page=${page}`)
 }
 
 async function getTrendingTVShows() {

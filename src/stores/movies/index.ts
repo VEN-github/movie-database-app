@@ -17,8 +17,6 @@ export const useMovieStore = defineStore('movie', () => {
   const casts = ref<Cast<Photo>[]>([])
   const photos = ref<Photo[]>([])
   const similarMovies = ref<Movie[]>([])
-  const currentPage = ref<number>(1)
-  const totalPages = ref<number>(0)
 
   async function getGenres(): Promise<void> {
     try {
@@ -30,12 +28,10 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  async function getMovies(page: number = 10): Promise<void> {
+  async function getMovies(page: number): Promise<void> {
     try {
       const { data } = await API.movies.getMovies(page)
       movies.value = initMovies(data.results)
-      currentPage.value = data.page || 1
-      totalPages.value = data.total_pages || 0
     } catch (error) {
       const _error = error as AxiosError<string>
       handleApiError(_error.response?.status)
@@ -52,9 +48,9 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  async function getPopularMovies(): Promise<void> {
+  async function getPopularMovies(page: number): Promise<void> {
     try {
-      const { data } = await API.movies.getPopularMovies()
+      const { data } = await API.movies.getPopularMovies(page)
       popularMovies.value = initMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>
@@ -62,10 +58,10 @@ export const useMovieStore = defineStore('movie', () => {
     }
   }
 
-  async function getTopRatedMovies(): Promise<void> {
+  async function getTopRatedMovies(page: number): Promise<void> {
     try {
       await getGenres()
-      const { data } = await API.movies.getTopRatedMovies()
+      const { data } = await API.movies.getTopRatedMovies(page)
       topRatedMovies.value = initMovies(data.results)
     } catch (error) {
       const _error = error as AxiosError<string>

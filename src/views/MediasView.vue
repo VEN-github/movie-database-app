@@ -8,7 +8,7 @@
           <select v-model="filters.type" class="bg-transparent outline-none">
             <option class="bg-custom-bg" value="all">All</option>
             <option class="bg-custom-bg" value="popular">Popular</option>
-            <option class="bg-custom-bg" value="top rated">Top Rated</option>
+            <option class="bg-custom-bg" value="top-rated">Top Rated</option>
           </select>
           <Separator orientation="vertical" class="!h-4" />
           <select
@@ -16,7 +16,7 @@
             class="bg-transparent outline-none"
             @change="handleGenreFilter"
           >
-            <option class="bg-custom-bg" value="">Genre</option>
+            <option class="bg-custom-bg" selected disabled>Genre</option>
             <option v-for="genre in genres" :key="genre.id" class="bg-custom-bg" :value="genre.id">
               {{ genre.name }}
             </option>
@@ -66,11 +66,23 @@
           <MediaCardList v-for="media in filteredMedias" :key="media.id" :media="media" />
         </div>
         <div class="mb-8 mt-16 flex justify-center">
-          <Pagination :total="42809" :sibling-count="1" show-edges :default-page="1">
+          <Pagination
+            v-model:page="currentPage"
+            :total="500"
+            :sibling-count="1"
+            :items-per-page="1"
+            :default-page="1"
+            :show-edges="showPaginationEdges"
+            @update:page="changeQueryPage"
+          >
             <PaginationList v-slot="{ items }" class="flex items-center gap-1">
-              <PaginationFirst class="bg-transparent" />
-              <PaginationPrev class="bg-transparent" />
-              <template v-for="(item, index) in items">
+              <PaginationFirst
+                class="size-8 border-0 bg-primary hover:bg-custom-primary xs:size-10"
+              />
+              <PaginationPrev
+                class="size-8 border-0 bg-primary hover:bg-custom-primary xs:size-10"
+              />
+              <template v-for="(item, index) in items" :key="item">
                 <PaginationListItem
                   v-if="item.type === 'page'"
                   :key="index"
@@ -78,17 +90,22 @@
                   as-child
                 >
                   <Button
-                    class="h-10 w-10 p-0"
-                    :class="{ 'bg-custom-primary': item.value === currentPage }"
-                    @click="router.push({ path: route.path, query: { page: item.value } })"
+                    class="size-8 p-0 hover:bg-custom-primary xs:size-10"
+                    :class="{
+                      'bg-custom-primary': item.value === currentPage
+                    }"
                   >
                     {{ item.value }}
                   </Button>
                 </PaginationListItem>
                 <PaginationEllipsis v-else :key="item.type" :index="index" />
               </template>
-              <PaginationNext class="bg-transparent" />
-              <PaginationLast class="bg-transparent" />
+              <PaginationNext
+                class="size-8 border-0 bg-primary hover:bg-custom-primary xs:size-10"
+              />
+              <PaginationLast
+                class="size-8 border-0 bg-primary hover:bg-custom-primary xs:size-10"
+              />
             </PaginationList>
           </Pagination>
         </div>
@@ -145,6 +162,7 @@ const filters = reactive({
 })
 const genreDropdown = ref<HTMLSelectElement | null>(null)
 const currentPage = ref<number>(1)
+const showPaginationEdges = ref<boolean>(false)
 
 const layout = computed<string>(() => {
   return commonStore.layout
@@ -164,26 +182,8 @@ const filteredGenres = computed<Genre[]>(() => {
 
 watch(
   () => filters.type,
-  async (newValue) => {
-    const fetchFunctions: Record<string, () => Promise<void>> = {
-      all: fetchAllMedia,
-      popular: fetchPopularMedia,
-      'top rated': fetchTopRatedMedia
-    }
-    const fetchFunction = fetchFunctions[newValue as keyof typeof fetchFunctions]
-
-    if (fetchFunction) {
-      isLoading.value = true
-      isError.value = false
-      try {
-        await fetchFunction()
-      } catch (error) {
-        isError.value = true
-        handleFetchError(error)
-      } finally {
-        isLoading.value = false
-      }
-    }
+  (newValue) => {
+    initData(newValue)
   },
   { deep: true }
 )
@@ -199,17 +199,9 @@ watch(
 )
 
 watchEffect(async () => {
-  isLoading.value = true
-  isError.value = false
-  try {
-    await fetchAllGenres()
-    await fetchAllMedia()
-  } catch (error) {
-    isError.value = true
-    handleFetchError(error)
-  } finally {
-    isLoading.value = false
-  }
+  getCurrentPage()
+  initData()
+  await fetchAllGenres()
 })
 
 onMounted(() => {
@@ -220,6 +212,45 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
+
+function getCurrentPage() {
+  const page = route.query.page
+
+  if (typeof page === 'string') {
+    const newPage = parseInt(page)
+    currentPage.value = isNaN(newPage) ? 1 : newPage
+    return
+  }
+
+  currentPage.value = 1
+}
+
+async function initData(type: string = 'all') {
+  isLoading.value = true
+  isError.value = false
+
+  const fetchFunctions: Record<string, () => Promise<void>> = {
+    all: fetchAllMedia,
+    popular: fetchPopularMedia,
+    'top-rated': fetchTopRatedMedia
+  }
+
+  const fetchFunction = fetchFunctions[type as keyof typeof fetchFunctions]
+
+  if (fetchFunction) {
+    try {
+      await fetchFunction()
+    } catch (error) {
+      isError.value = true
+      handleFetchError(error)
+    } finally {
+      isLoading.value = false
+    }
+  } else {
+    isLoading.value = false
+    isError.value = false
+  }
+}
 
 async function fetchAllGenres() {
   if (route.path === '/movies') {
@@ -259,17 +290,17 @@ async function getMovieGenres(): Promise<void> {
 }
 
 async function getMovies(): Promise<void> {
-  await movieStore.getMovies()
+  await movieStore.getMovies(currentPage.value)
   medias.value = movieStore.movies
 }
 
 async function getPopularMovies(): Promise<void> {
-  await movieStore.getPopularMovies()
+  await movieStore.getPopularMovies(currentPage.value)
   medias.value = movieStore.popularMovies
 }
 
 async function getTopRatedMovies(): Promise<void> {
-  await movieStore.getTopRatedMovies()
+  await movieStore.getTopRatedMovies(currentPage.value)
   medias.value = movieStore.topRatedMovies
 }
 
@@ -279,17 +310,17 @@ async function getTVShowsGenres(): Promise<void> {
 }
 
 async function getTVShows(): Promise<void> {
-  await tvStore.getTVShows()
+  await tvStore.getTVShows(currentPage.value)
   medias.value = tvStore.tvShows
 }
 
 async function getPopularTVShows(): Promise<void> {
-  await tvStore.getPopularTVShows()
+  await tvStore.getPopularTVShows(currentPage.value)
   medias.value = tvStore.popularTVShows
 }
 
 async function getTopRatedTVShows(): Promise<void> {
-  await tvStore.getTopRatedTVShows()
+  await tvStore.getTopRatedTVShows(currentPage.value)
   medias.value = tvStore.topRatedTVShows
 }
 
@@ -300,6 +331,7 @@ function handleFetchError(error: unknown): void {
 
 function handleResize(): void {
   imgWidth.value = window.innerWidth < 768 ? 342 : 200
+  showPaginationEdges.value = window.innerWidth >= 640
 }
 
 async function changeLayout(layout: string): Promise<void> {
@@ -322,5 +354,9 @@ function handleGenreFilter(e: Event): void {
 function removeFilterGenre(id: number): void {
   const index = filters.genres.findIndex((genre) => genre === id)
   filters.genres.splice(index, 1)
+}
+
+function changeQueryPage(value: number) {
+  router.push({ path: route.path, query: { page: value } })
 }
 </script>

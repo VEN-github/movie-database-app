@@ -10,12 +10,12 @@ async function getMovie(id: number) {
   return await api.get<Movie>(`/movie/${id}?language=en-US`)
 }
 
-async function getPopularMovies() {
-  return await api.get<APIResponse<Movie[]>>('/movie/popular?language=en-US')
+async function getPopularMovies(page: number) {
+  return await api.get<APIResponse<Movie[]>>(`/movie/popular?language=en-US&page=${page}`)
 }
 
-async function getTopRatedMovies() {
-  return await api.get<APIResponse<Movie[]>>('/movie/top_rated?language=en-US')
+async function getTopRatedMovies(page: number) {
+  return await api.get<APIResponse<Movie[]>>(`/movie/top_rated?language=en-US&page=${page}`)
 }
 
 async function getTrendingMovies() {
