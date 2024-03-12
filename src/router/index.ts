@@ -3,12 +3,35 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import NotFound from '@/views/NotFound.vue'
 
+const DEFAULT_TITLE = 'Movie Database Application'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'home', component: HomeView },
-    { path: '/movies', name: 'movies', component: () => import('@/views/MediasView.vue') },
-    { path: '/tv-shows', name: 'tv-shows', component: () => import('@/views/MediasView.vue') },
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView,
+      meta: {
+        title: 'Home'
+      }
+    },
+    {
+      path: '/movies',
+      name: 'movies',
+      component: () => import('@/views/MediasView.vue'),
+      meta: {
+        title: 'Movies'
+      }
+    },
+    {
+      path: '/tv-shows',
+      name: 'tv-shows',
+      component: () => import('@/views/MediasView.vue'),
+      meta: {
+        title: 'TV Shows'
+      }
+    },
     {
       path: '/:type/:slug/:id',
       name: 'media-details',
@@ -26,6 +49,11 @@ const router = createRouter({
       return { top: 0, behavior: 'smooth' }
     }
   }
+})
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title ? `${to.meta.title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE
+  next()
 })
 
 export default router

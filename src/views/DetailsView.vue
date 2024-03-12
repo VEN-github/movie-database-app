@@ -100,6 +100,7 @@ const casts = ref<Cast<Photo>[]>([])
 const photos = ref<Photo[]>([])
 const similarMedias = ref<(Movie | TV)[]>([])
 const isLoading = ref<boolean>(false)
+const DEFAULT_TITLE = 'Movie Database Application'
 
 const convertedId = computed<number>(() => {
   return parseInt(props.id)
@@ -164,8 +165,10 @@ onBeforeMount(async () => {
   try {
     if (props.type === 'movie') {
       await Promise.all([getMovie(), getMovieCasts(), getMoviePhotos(), getSimilarMovies()])
+      document.title = !title.value ? DEFAULT_TITLE : `${title.value} | ${DEFAULT_TITLE}`
     } else if (props.type === 'tv-show') {
       await Promise.all([getTVShow(), getTVShowCasts(), getTVShowPhotos(), getSimilarTVShows()])
+      document.title = !title.value ? DEFAULT_TITLE : `${title.value} | ${DEFAULT_TITLE}`
     }
   } catch (error) {
     router.push('/404')
