@@ -5,7 +5,7 @@ export type Movie = {
   release_date: string
   vote_average: number
   poster_path: string
-  backdrop_path: string
+  backdrop_path: Photo
   genre_ids?: number[]
   genres?: Genre[]
   runtime?: number

@@ -1,9 +1,25 @@
 <template>
   <BaseSpinnerContainer v-if="isLoading" />
   <div v-else-if="!isLoading && media">
+    <Head>
+      <title>{{ titleTab }}</title>
+      <meta name="title" :content="truncateForSEO(titleTab, 55)" />
+      <meta name="description" :content="truncateForSEO(media.overview, 150)" />
+      <link rel="canonical" :href="canonicalLink" />
+      <meta property="og:url" :content="canonicalLink" />
+      <meta property="og:type" content="website" />
+      <meta property="og:title" :content="truncateForSEO(titleTab, 55)" />
+      <meta property="og:description" :content="truncateForSEO(media.overview, 150)" />
+      <meta property="og:image:url" :content="media.backdrop_path.medium" />
+      <meta property="twitter:card" content="summary_large_image" />
+      <meta property="twitter:url" :content="canonicalLink" />
+      <meta property="twitter:title" :content="truncateForSEO(titleTab, 55)" />
+      <meta property="twitter:description" :content="truncateForSEO(media.overview, 150)" />
+      <meta property="twitter:image" :content="media.backdrop_path.medium" />
+    </Head>
     <section
       class="min-h-screen w-full bg-cover bg-center bg-no-repeat"
-      :style="{ backgroundImage: `url(${media.backdrop_path})` }"
+      :style="{ backgroundImage: `url(${media.backdrop_path.original})` }"
     >
       <div
         class="min-h-screen w-full bg-gradient-to-br from-custom-bg from-0% to-transparent pb-16 pt-32 backdrop-blur-sm sm:pt-40"
@@ -70,6 +86,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onBeforeMount } from 'vue'
+import { Head } from '@unhead/vue/components'
 import { useRouter } from 'vue-router'
 import { useMovieStore } from '@/stores/movies'
 import type { Movie, Cast, Photo } from '@/services/movies/types'
@@ -118,6 +135,10 @@ const title = computed<string>(() => {
   return ''
 })
 
+const titleTab = computed<string>(() => {
+  return !title.value ? DEFAULT_TITLE : `${title.value} | ${DEFAULT_TITLE}`
+})
+
 const releaseDate = computed<string>(() => {
   if (media.value && 'release_date' in media.value) {
     return dayjs(media.value.release_date).format('YYYY')
@@ -158,6 +179,10 @@ const runtime = computed<string | null>(() => {
   const minutesText = remainingMinutes > 0 ? remainingMinutes + 'min' : ''
 
   return hoursText + (hours > 0 && remainingMinutes > 0 ? ' ' : '') + minutesText
+})
+
+const canonicalLink = computed<string>(() => {
+  return window.location.href
 })
 
 onBeforeMount(async () => {
@@ -215,5 +240,13 @@ async function getTVShowPhotos(): Promise<void> {
 async function getSimilarTVShows(): Promise<void> {
   await tvStore.getSimilarTVShows(convertedId.value)
   similarMedias.value = tvStore.similarTVShows
+}
+
+function truncateForSEO(text: string | undefined, maxLength: number): string {
+  if (text && text?.length > maxLength) {
+    return text?.substring(0, maxLength).trim() + '...'
+  }
+
+  return text || ''
 }
 </script>

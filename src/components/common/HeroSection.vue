@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative h-screen w-full bg-cover bg-center bg-no-repeat"
-    :data-lazy-src="media.backdrop_path"
+    :data-lazy-src="media.backdrop_path.original"
   >
     <div class="absolute bottom-0 left-0 w-full">
       <div

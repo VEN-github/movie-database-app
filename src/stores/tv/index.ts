@@ -139,7 +139,12 @@ export const useTVStore = defineStore('tv', () => {
         poster_path: item.poster_path
           ? `${POSTER_URL.large}${item.poster_path}`
           : DEFAULT_POSTER_URL.large,
-        backdrop_path: `${BACKDROP_URL.original}${item.backdrop_path}`,
+        backdrop_path: {
+          small: `${BACKDROP_URL.small}${item.backdrop_path}`,
+          medium: `${BACKDROP_URL.medium}${item.backdrop_path}`,
+          large: `${BACKDROP_URL.large}${item.backdrop_path}`,
+          original: `${BACKDROP_URL.original}${item.backdrop_path}`
+        },
         genre_ids: item.genre_ids
       }
     })
@@ -157,7 +162,12 @@ export const useTVStore = defineStore('tv', () => {
       poster_path: data.poster_path
         ? `${POSTER_URL.large}${data.poster_path}`
         : DEFAULT_POSTER_URL.large,
-      backdrop_path: `${BACKDROP_URL.original}${data.backdrop_path}`,
+      backdrop_path: {
+        small: `${BACKDROP_URL.small}${data.backdrop_path}`,
+        medium: `${BACKDROP_URL.medium}${data.backdrop_path}`,
+        large: `${BACKDROP_URL.large}${data.backdrop_path}`,
+        original: `${BACKDROP_URL.original}${data.backdrop_path}`
+      },
       genres: data.genres,
       episode_run_time: data.episode_run_time
     }
